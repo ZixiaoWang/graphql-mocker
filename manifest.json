@@ -1,0 +1,40 @@
+{
+    "name": "Graphql Mocker",
+    "description": "Intercept graphql request and return whatever you want to return",
+    "version": "1.0",
+    "manifest_version": 3,
+    "content_scripts": [{
+        "matches": [
+            "https://*.flexport.com/*",
+            "https://*.flexport.internal/*"
+        ],
+        "js": ["html/dist/content/content-script.js"],
+        "run_at": "document_start"
+    }],
+    "background": {
+        "service_worker": "html/dist/background/background.js"
+    },
+    "devtools_page": "html/dist/devtools/devtools.html",
+    "permissions": [
+        "storage",
+        "webRequest",
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback"
+    ],
+    "action": {
+        "default_title": "Click to see all the graphql requests",
+        "default_popup": "html/dist/popup/popup.html",
+        "default_icon": {
+            "16": "/images/gql_16.png",
+            "32": "/images/gql_32.png",
+            "48": "/images/gql_48.png",
+            "128": "/images/gql_128.png"
+        }
+    },
+    "icons": {
+        "16": "/images/gql_16.png",
+        "32": "/images/gql_32.png",
+        "48": "/images/gql_48.png",
+        "128": "/images/gql_128.png"
+    }
+  }

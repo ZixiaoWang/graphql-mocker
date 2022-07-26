@@ -1,0 +1,18 @@
+{
+  "name": "graphql-mocker",
+  "version": "1.0.0",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chrome": "^0.0.190",
+    "parcel": "^2.6.2",
+    "typescript": "^4.7.4"
+  },
+  "scripts": {
+    "build:panel": "rm -rf html/dist/panel && yarn parcel build --no-source-maps --no-cache --public-url ./ --dist-dir html/dist/panel panel/panel.html",
+    "watch:panel": "rm -rf html/dist/panel && yarn parcel watch --no-source-maps --no-cache --public-url ./ --dist-dir html/dist/panel panel/panel.html"
+  },
+  "dependencies": {
+    "preact": "^10.10.0",
+    "preact-router": "^4.1.0"
+  }
+}

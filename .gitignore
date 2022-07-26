@@ -1,0 +1,8 @@
+# Cache
+.parcel-cache
+
+# Node modules
+node_modules
+
+# Error log or other logs
+yarn.error
