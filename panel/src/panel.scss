@@ -1,0 +1,122 @@
+html, body {
+    margin: 0px;
+}
+
+.connection {
+    display: flex;
+    width: 100%;
+
+    &-list {
+        width: 100%;
+        height: fit-content;
+        border-spacing: 0;
+
+        th {
+            text-align: left;
+            height: 30px;
+            line-height: 30px;
+            padding: 0px 8px;
+            background-color: rgb(233, 233, 233);
+            border-bottom: 1px solid #666666;
+        }
+
+        &-item {
+            cursor: pointer;
+
+            td {
+                padding: 8px;
+                border-bottom: 1px solid #666666;
+            }
+
+            &:last-of-type {
+                td {
+                    border-bottom: 2px solid #cccccc;
+                }
+            }
+
+            &:hover {
+                td {
+                    background-color: rgb(232, 243, 255);
+                }
+            }
+        }
+    }
+
+    &-detail {
+        width: 750px;
+        height: 100vh;
+        border-left: 1px solid #333333;
+
+        &-panel {
+            height: calc(100% - 30px);
+            overflow: auto;
+        }
+
+        &-tabs {
+            display: flex;
+            border-bottom: 1px solid #666666;
+        }
+
+        &-tab {
+            font-size: 12px;
+            height: 30px;
+            line-height: 30px;
+            padding: 0px 8px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #efefef;
+            }
+
+            &.is-active {
+                background-color: #565656;
+            }
+        }
+    }
+
+    &-header {
+        &-group {
+            overflow: auto;
+            & + .connection-header-group {
+                margin-top: 12px;
+            }
+        }
+
+        &-head {
+            padding: 8px 12px;
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
+
+        &-item {
+            font-size: 10px;
+            text-align: left;
+
+            &-name {
+                white-space: nowrap;
+            }
+
+            &-name,
+            &-value {
+                vertical-align: text-top;
+                padding: 8px 0px 0px 12px;
+            }
+        }
+    }
+
+    &-payload {
+
+        &-controls {
+            padding: 0px 8px;
+            font-weight: 700;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        &-panel {
+            overflow: auto;
+            padding: 8px;
+            padding-bottom: 12px;
+        }
+    }
+}

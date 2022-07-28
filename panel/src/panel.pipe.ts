@@ -4,7 +4,7 @@ export const GRAPHQL_ONLY = (networkRequest: chrome.devtools.network.Request): b
     const method: string = request.method;
 
     if (method === "POST" && url.pathname === "/graphql") {
-        console.log(request)
+        console.log(networkRequest)
         return true;
     }
 

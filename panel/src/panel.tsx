@@ -1,33 +1,33 @@
-import { h, Fragment, render } from "preact";
+import { h, render } from "preact";
+import { useState } from "preact/hooks";
+import { ConnectionDetail, ConnectionList } from "./components";
 import { GRAPHQL_ONLY } from "./panel.pipe";
 import { panelService, PanelService, usePanelService } from "./panel.service";
 
+import "./panel.scss";
+
 const DevtoolsPanelApp = () => {
+    const [focusedConnection, setFocusedConnection] = useState<chrome.devtools.network.Request | null>(null);
     const panelService: PanelService = usePanelService();
 
     const graphqlReqeusts = panelService.pipe(GRAPHQL_ONLY);
 
-    const onClickHandler = () => {
-        window.postMessage(
-            "One small step for a man, one gaint leap for the entire human being"
-        )
+    const onItemClickHandler = (selectedConnection: chrome.devtools.network.Request): void => {
+        setFocusedConnection(selectedConnection)
     }
 
     return (
-        <Fragment>
-            <h1>Graphql Mocker</h1>
+        <div className="connection">
+            <ConnectionList 
+                compact={Boolean(focusedConnection)}
+                connections={graphqlReqeusts} 
+                onClick={onItemClickHandler}
+            />
             {
-                graphqlReqeusts.map((request) => {
-                    return <div onClick={onClickHandler}>
-                        <span>{ request.request.url }</span>
-                        <span>&nbsp;</span>
-                        <span>{ request.request.method }</span>
-                        <span>&nbsp;</span>
-                        <span>{ request.request.postData?.text }</span>
-                    </div>
-                })
+                focusedConnection && 
+                <ConnectionDetail connection={focusedConnection} />
             }
-        </Fragment>
+        </div>
     )
 }
 
@@ -38,6 +38,6 @@ render(
 
 chrome.devtools.network
     .onRequestFinished
-    .addListener((networkRequest: chrome.devtools.network.Request)=>{
+    .addListener((networkRequest: chrome.devtools.network.Request) => {
         panelService.push(networkRequest);
     });

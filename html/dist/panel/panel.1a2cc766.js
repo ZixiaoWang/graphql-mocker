@@ -533,73 +533,44 @@ function hmrAcceptRun(bundle, id) {
 
 },{}],"es34I":[function(require,module,exports) {
 var _preact = require("preact");
+var _hooks = require("preact/hooks");
+var _components = require("./components");
 var _panelPipe = require("./panel.pipe");
 var _panelService = require("./panel.service");
+var _panelScss = require("./panel.scss");
 const DevtoolsPanelApp = ()=>{
+    const [focusedConnection, setFocusedConnection] = (0, _hooks.useState)(null);
     const panelService = (0, _panelService.usePanelService)();
     const graphqlReqeusts = panelService.pipe((0, _panelPipe.GRAPHQL_ONLY));
-    const onClickHandler = ()=>{
-        window.postMessage("One small step for a man, one gaint leap for the entire human being");
+    const onItemClickHandler = (selectedConnection)=>{
+        setFocusedConnection(selectedConnection);
     };
-    return /*#__PURE__*/ (0, _preact.h)((0, _preact.Fragment), {
+    return /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection",
         __source: {
             fileName: "panel/src/panel.tsx",
-            lineNumber: 17,
+            lineNumber: 20,
             columnNumber: 9
         },
         __self: undefined
-    }, /*#__PURE__*/ (0, _preact.h)("h1", {
+    }, /*#__PURE__*/ (0, _preact.h)((0, _components.ConnectionList), {
+        compact: Boolean(focusedConnection),
+        connections: graphqlReqeusts,
+        onClick: onItemClickHandler,
         __source: {
             fileName: "panel/src/panel.tsx",
-            lineNumber: 18,
+            lineNumber: 21,
             columnNumber: 13
         },
         __self: undefined
-    }, "Graphql Mocker"), graphqlReqeusts.map((request)=>{
-        return /*#__PURE__*/ (0, _preact.h)("div", {
-            onClick: onClickHandler,
-            __source: {
-                fileName: "panel/src/panel.tsx",
-                lineNumber: 21,
-                columnNumber: 28
-            },
-            __self: undefined
-        }, /*#__PURE__*/ (0, _preact.h)("span", {
-            __source: {
-                fileName: "panel/src/panel.tsx",
-                lineNumber: 22,
-                columnNumber: 25
-            },
-            __self: undefined
-        }, request.request.url), /*#__PURE__*/ (0, _preact.h)("span", {
-            __source: {
-                fileName: "panel/src/panel.tsx",
-                lineNumber: 23,
-                columnNumber: 25
-            },
-            __self: undefined
-        }, "\xa0"), /*#__PURE__*/ (0, _preact.h)("span", {
-            __source: {
-                fileName: "panel/src/panel.tsx",
-                lineNumber: 24,
-                columnNumber: 25
-            },
-            __self: undefined
-        }, request.request.method), /*#__PURE__*/ (0, _preact.h)("span", {
-            __source: {
-                fileName: "panel/src/panel.tsx",
-                lineNumber: 25,
-                columnNumber: 25
-            },
-            __self: undefined
-        }, "\xa0"), /*#__PURE__*/ (0, _preact.h)("span", {
-            __source: {
-                fileName: "panel/src/panel.tsx",
-                lineNumber: 26,
-                columnNumber: 25
-            },
-            __self: undefined
-        }, request.request.postData?.text));
+    }), focusedConnection && /*#__PURE__*/ (0, _preact.h)((0, _components.ConnectionDetail), {
+        connection: focusedConnection,
+        __source: {
+            fileName: "panel/src/panel.tsx",
+            lineNumber: 28,
+            columnNumber: 17
+        },
+        __self: undefined
     }));
 };
 (0, _preact.render)(/*#__PURE__*/ (0, _preact.h)(DevtoolsPanelApp, {
@@ -614,7 +585,7 @@ chrome.devtools.network.onRequestFinished.addListener((networkRequest)=>{
     (0, _panelService.panelService).push(networkRequest);
 });
 
-},{"preact":"cwEwC","./panel.pipe":"8bgwM","./panel.service":"9Vd86"}],"cwEwC":[function(require,module,exports) {
+},{"preact":"cwEwC","./components":"g6522","./panel.pipe":"8bgwM","./panel.service":"9Vd86","./panel.scss":"ekLgM","preact/hooks":"97VL9"}],"cwEwC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "render", ()=>P);
@@ -950,69 +921,271 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"8bgwM":[function(require,module,exports) {
+},{}],"g6522":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "GRAPHQL_ONLY", ()=>GRAPHQL_ONLY);
-const GRAPHQL_ONLY = (networkRequest)=>{
-    const request = networkRequest.request;
-    const url = new URL(request.url);
-    const method = request.method;
-    if (method === "POST" && url.pathname === "/graphql") {
-        console.log(request);
-        return true;
-    }
-    return false;
+var _connectionList = require("./connection-list");
+parcelHelpers.exportAll(_connectionList, exports);
+var _connectionDetail = require("./connection-detail");
+parcelHelpers.exportAll(_connectionDetail, exports);
+
+},{"./connection-list":"7zVZ4","./connection-detail":"5dezv","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"7zVZ4":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ConnectionList", ()=>ConnectionList);
+var _preact = require("preact");
+var _panelHelper = require("../panel.helper");
+const ConnectionList = ({ compact , connections , onClick  })=>{
+    if (connections.length === 0) return /*#__PURE__*/ (0, _preact.h)("div", {
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 14,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, "There's no Graphql Reqeusts");
+    const onClickHandler = (connection)=>{
+        if (onClick && typeof onClick) onClick(connection);
+    };
+    return /*#__PURE__*/ (0, _preact.h)((0, _preact.Fragment), {
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 25,
+            columnNumber: 9
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("table", {
+        className: "connection-list",
+        frameBorder: 1,
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 26,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("thead", {
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 27,
+            columnNumber: 17
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("th", {
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 28,
+            columnNumber: 21
+        },
+        __self: undefined
+    }, "#"), /*#__PURE__*/ (0, _preact.h)("th", {
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 29,
+            columnNumber: 21
+        },
+        __self: undefined
+    }, "Query"), /*#__PURE__*/ (0, _preact.h)("th", {
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 30,
+            columnNumber: 21
+        },
+        __self: undefined
+    }, "Status"), /*#__PURE__*/ (0, _preact.h)("th", {
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 31,
+            columnNumber: 21
+        },
+        __self: undefined
+    }, "Size"), /*#__PURE__*/ (0, _preact.h)("th", {
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 32,
+            columnNumber: 21
+        },
+        __self: undefined
+    }, "Time")), /*#__PURE__*/ (0, _preact.h)("tbody", {
+        __source: {
+            fileName: "panel/src/components/connection-list.tsx",
+            lineNumber: 34,
+            columnNumber: 17
+        },
+        __self: undefined
+    }, connections.map((connection, index)=>{
+        const { request , response , time  } = connection;
+        const graphqlRequestBodyText = request.postData?.text || "{}";
+        const graphqlRequestBody = JSON.parse(graphqlRequestBodyText);
+        return /*#__PURE__*/ (0, _preact.h)("tr", {
+            className: "connection-list-item",
+            onClick: ()=>onClickHandler(connection),
+            __source: {
+                fileName: "panel/src/components/connection-list.tsx",
+                lineNumber: 41,
+                columnNumber: 33
+            },
+            __self: undefined
+        }, /*#__PURE__*/ (0, _preact.h)("td", {
+            __source: {
+                fileName: "panel/src/components/connection-list.tsx",
+                lineNumber: 43,
+                columnNumber: 37
+            },
+            __self: undefined
+        }, index), /*#__PURE__*/ (0, _preact.h)("td", {
+            __source: {
+                fileName: "panel/src/components/connection-list.tsx",
+                lineNumber: 44,
+                columnNumber: 37
+            },
+            __self: undefined
+        }, (0, _panelHelper.getQueryName)(graphqlRequestBody.query) || graphqlRequestBody.query_hash), /*#__PURE__*/ (0, _preact.h)("td", {
+            __source: {
+                fileName: "panel/src/components/connection-list.tsx",
+                lineNumber: 45,
+                columnNumber: 37
+            },
+            __self: undefined
+        }, response.status), /*#__PURE__*/ (0, _preact.h)("td", {
+            __source: {
+                fileName: "panel/src/components/connection-list.tsx",
+                lineNumber: 46,
+                columnNumber: 37
+            },
+            __self: undefined
+        }, response.content.size), /*#__PURE__*/ (0, _preact.h)("td", {
+            __source: {
+                fileName: "panel/src/components/connection-list.tsx",
+                lineNumber: 47,
+                columnNumber: 37
+            },
+            __self: undefined
+        }, time));
+    }))));
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"9Vd86":[function(require,module,exports) {
+},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../panel.helper":"dwAkW"}],"dwAkW":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "PanelService", ()=>PanelService);
-parcelHelpers.export(exports, "panelService", ()=>panelService);
-parcelHelpers.export(exports, "usePanelService", ()=>usePanelService);
+parcelHelpers.export(exports, "getQueryName", ()=>getQueryName);
+const getQueryName = (queryString)=>{
+    if (!queryString) return null;
+    return queryString.split("{")[0].split("(")[0].trim().split(" ")[1] || null;
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"5dezv":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ConnectionDetail", ()=>ConnectionDetail);
+var _preact = require("preact");
 var _hooks = require("preact/hooks");
-class PanelService {
-    callbacks = new Set();
-    connections = [];
-    constructor(){
-        window.panelService = this;
+var _connectionHeader = require("./connection-header");
+var _connectionPayload = require("./connection-payload");
+const tabs = [
+    {
+        label: "Headers",
+        value: "HEADERS"
+    },
+    {
+        label: "Payload",
+        value: "PAYLOAD"
+    },
+    {
+        label: "Response",
+        value: "RESPONSE"
+    },
+    {
+        label: "Settings",
+        value: "SETTINGS"
     }
-    push(connection) {
-        this.connections.push(connection);
-        this.notify();
-    }
-    pipe(...pipes) {
-        let filteredConnections = this.connections;
-        for (const pipe of pipes)filteredConnections = filteredConnections.filter(pipe);
-        return filteredConnections;
-    }
-    register(callback) {
-        this.callbacks.add(callback);
-    }
-    unregister(callback) {
-        this.callbacks.delete(callback);
-    }
-    notify(...args) {
-        this.callbacks.forEach((callback)=>{
-            if (callback && typeof callback === "function") {
-                if (args.length === 0) callback(Math.random());
-                else callback(...args);
-            }
-        });
-    }
-}
-const panelService = new PanelService();
-const usePanelService = ()=>{
-    const [_, setNounce] = (0, _hooks.useState)();
+];
+const ConnectionDetail = ({ connection  })=>{
+    const { request , response  } = connection;
+    const [focusedTab, setFocusedTab] = (0, _hooks.useState)("HEADERS");
+    const [content1, setContent] = (0, _hooks.useState)("{}");
     (0, _hooks.useEffect)(()=>{
-        panelService.register(setNounce);
-        return ()=>panelService.unregister(setNounce);
+        connection.getContent((content)=>{
+            setContent(content);
+        });
     }, []);
-    return panelService;
+    const onTabClickHandler = (label)=>{
+        setFocusedTab(label);
+    };
+    return /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-detail",
+        __source: {
+            fileName: "panel/src/components/connection-detail.tsx",
+            lineNumber: 41,
+            columnNumber: 9
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-detail-tabs",
+        __source: {
+            fileName: "panel/src/components/connection-detail.tsx",
+            lineNumber: 42,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-detail-tab is-close",
+        __source: {
+            fileName: "panel/src/components/connection-detail.tsx",
+            lineNumber: 43,
+            columnNumber: 17
+        },
+        __self: undefined
+    }, "\u2573"), tabs.map((tab, index)=>{
+        return /*#__PURE__*/ (0, _preact.h)("div", {
+            key: index,
+            className: "connection-detail-tab",
+            onClick: ()=>onTabClickHandler(tab.value),
+            __source: {
+                fileName: "panel/src/components/connection-detail.tsx",
+                lineNumber: 49,
+                columnNumber: 29
+            },
+            __self: undefined
+        }, tab.label);
+    })), /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-detail-panel",
+        __source: {
+            fileName: "panel/src/components/connection-detail.tsx",
+            lineNumber: 58,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, focusedTab === "HEADERS" && /*#__PURE__*/ (0, _preact.h)((0, _connectionHeader.ConnectionHeader), {
+        requestHeaders: request.headers,
+        responseHeaders: response.headers,
+        __source: {
+            fileName: "panel/src/components/connection-detail.tsx",
+            lineNumber: 59,
+            columnNumber: 47
+        },
+        __self: undefined
+    }), focusedTab === "PAYLOAD" && /*#__PURE__*/ (0, _preact.h)((0, _connectionPayload.ConnectionPayload), {
+        type: "REQUEST",
+        payload: request.postData?.text || "{}",
+        __source: {
+            fileName: "panel/src/components/connection-detail.tsx",
+            lineNumber: 60,
+            columnNumber: 47
+        },
+        __self: undefined
+    }), focusedTab === "RESPONSE" && /*#__PURE__*/ (0, _preact.h)((0, _connectionPayload.ConnectionPayload), {
+        type: "RESPONSE",
+        payload: content1,
+        __source: {
+            fileName: "panel/src/components/connection-detail.tsx",
+            lineNumber: 61,
+            columnNumber: 48
+        },
+        __self: undefined
+    })));
 };
 
-},{"preact/hooks":"97VL9","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"97VL9":[function(require,module,exports) {
+},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","preact/hooks":"97VL9","./connection-header":"9zgEq","./connection-payload":"bDzSx"}],"97VL9":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "useState", ()=>y);
@@ -1172,5 +1345,194 @@ function z(n, t16) {
     return "function" == typeof t16 ? t16(n) : t16;
 }
 
-},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}]},["gPSfo","es34I"], "es34I", "parcelRequire1284")
+},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"9zgEq":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ConnectionHeader", ()=>ConnectionHeader);
+var _preact = require("preact");
+var _hooks = require("preact/hooks");
+const ConnectionHeader = (props)=>{
+    const [requestHeaderCollapsed, setRequestHeaderCollapsed] = (0, _hooks.useState)(false);
+    const [responseHeaderCollapsed, setResponseHeaderCollapsed] = (0, _hooks.useState)(false);
+    const { requestHeaders , responseHeaders  } = props;
+    const renderHeaderDetail = (headers, ifRender)=>{
+        if (!ifRender) return null;
+        return /*#__PURE__*/ (0, _preact.h)("table", {
+            className: "connection-header-body",
+            __source: {
+                fileName: "panel/src/components/connection-header.tsx",
+                lineNumber: 24,
+                columnNumber: 13
+            },
+            __self: undefined
+        }, headers.map((headerItem, index)=>{
+            return /*#__PURE__*/ (0, _preact.h)("tr", {
+                className: "connection-header-item",
+                key: index,
+                __source: {
+                    fileName: "panel/src/components/connection-header.tsx",
+                    lineNumber: 28,
+                    columnNumber: 29
+                },
+                __self: undefined
+            }, /*#__PURE__*/ (0, _preact.h)("th", {
+                className: "connection-header-item-name",
+                __source: {
+                    fileName: "panel/src/components/connection-header.tsx",
+                    lineNumber: 29,
+                    columnNumber: 33
+                },
+                __self: undefined
+            }, headerItem.name), /*#__PURE__*/ (0, _preact.h)("td", {
+                className: "connection-header-item-value",
+                __source: {
+                    fileName: "panel/src/components/connection-header.tsx",
+                    lineNumber: 30,
+                    columnNumber: 33
+                },
+                __self: undefined
+            }, headerItem.value));
+        }));
+    };
+    return /*#__PURE__*/ (0, _preact.h)((0, _preact.Fragment), {
+        __source: {
+            fileName: "panel/src/components/connection-header.tsx",
+            lineNumber: 40,
+            columnNumber: 9
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-header-group",
+        __source: {
+            fileName: "panel/src/components/connection-header.tsx",
+            lineNumber: 41,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-header-head",
+        __source: {
+            fileName: "panel/src/components/connection-header.tsx",
+            lineNumber: 42,
+            columnNumber: 17
+        },
+        __self: undefined
+    }, "Request Header"), renderHeaderDetail(requestHeaders, !requestHeaderCollapsed)), /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-header-group",
+        __source: {
+            fileName: "panel/src/components/connection-header.tsx",
+            lineNumber: 47,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-header-head",
+        __source: {
+            fileName: "panel/src/components/connection-header.tsx",
+            lineNumber: 48,
+            columnNumber: 17
+        },
+        __self: undefined
+    }, "Response Header"), renderHeaderDetail(responseHeaders, !responseHeaderCollapsed)));
+};
+
+},{"preact":"cwEwC","preact/hooks":"97VL9","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"bDzSx":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ConnectionPayload", ()=>ConnectionPayload);
+var _preact = require("preact");
+var _hooks = require("preact/hooks");
+const ConnectionPayload = (props)=>{
+    const { payload  } = props;
+    const [showRawPayload, setShowRawPayload] = (0, _hooks.useState)(false);
+    return /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-payload",
+        __source: {
+            fileName: "panel/src/components/connection-payload.tsx",
+            lineNumber: 14,
+            columnNumber: 9
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-payload-controls",
+        __source: {
+            fileName: "panel/src/components/connection-payload.tsx",
+            lineNumber: 15,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, "Reqeust Payload"), /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-payload-panel",
+        __source: {
+            fileName: "panel/src/components/connection-payload.tsx",
+            lineNumber: 18,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, payload));
+};
+
+},{"preact":"cwEwC","preact/hooks":"97VL9","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"8bgwM":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GRAPHQL_ONLY", ()=>GRAPHQL_ONLY);
+const GRAPHQL_ONLY = (networkRequest)=>{
+    const request = networkRequest.request;
+    const url = new URL(request.url);
+    const method = request.method;
+    if (method === "POST" && url.pathname === "/graphql") {
+        console.log(networkRequest);
+        return true;
+    }
+    return false;
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"9Vd86":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "PanelService", ()=>PanelService);
+parcelHelpers.export(exports, "panelService", ()=>panelService);
+parcelHelpers.export(exports, "usePanelService", ()=>usePanelService);
+var _hooks = require("preact/hooks");
+class PanelService {
+    callbacks = new Set();
+    connections = [];
+    constructor(){
+        window.panelService = this;
+    }
+    push(connection) {
+        this.connections.push(connection);
+        this.notify();
+    }
+    pipe(...pipes) {
+        let filteredConnections = this.connections;
+        for (const pipe of pipes)filteredConnections = filteredConnections.filter(pipe);
+        return filteredConnections;
+    }
+    register(callback) {
+        this.callbacks.add(callback);
+    }
+    unregister(callback) {
+        this.callbacks.delete(callback);
+    }
+    notify(...args) {
+        this.callbacks.forEach((callback)=>{
+            if (callback && typeof callback === "function") {
+                if (args.length === 0) callback(Math.random());
+                else callback(...args);
+            }
+        });
+    }
+}
+const panelService = new PanelService();
+const usePanelService = ()=>{
+    const [_, setNounce] = (0, _hooks.useState)();
+    (0, _hooks.useEffect)(()=>{
+        panelService.register(setNounce);
+        return ()=>panelService.unregister(setNounce);
+    }, []);
+    return panelService;
+};
+
+},{"preact/hooks":"97VL9","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"ekLgM":[function() {},{}]},["gPSfo","es34I"], "es34I", "parcelRequire1284")
 
