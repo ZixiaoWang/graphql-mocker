@@ -37,6 +37,8 @@ export const ConnectionDetail = ({ connection }: ConnectionDetailProp) => {
         setFocusedTab(label);
     }
 
+    console.log(content)
+
     return (
         <div className="connection-detail">
             <div className="connection-detail-tabs">

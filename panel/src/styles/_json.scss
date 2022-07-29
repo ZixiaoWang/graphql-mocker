@@ -1,0 +1,22 @@
+.json {
+    &-editor {
+
+    }
+
+    &-row {
+        display: table-row;
+
+        &-index {
+            display: table-cell;
+            background-color: #333333;
+            color: white;
+            padding: 0px 8px;
+        }
+
+        &-content {
+            width: 100%;
+            display: table-cell;
+            background-color: #fefefe;
+        }
+    }
+}

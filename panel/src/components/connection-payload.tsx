@@ -1,5 +1,6 @@
 import { h } from "preact";
 import { useState, useEffect } from "preact/hooks";
+import { JSONEditor } from "./json-editor";
 
 export interface ConnectionPayloadProps {
     type: "REQUEST" | "RESPONSE",
@@ -16,7 +17,7 @@ export const ConnectionPayload = (props: ConnectionPayloadProps) => {
                 Reqeust Payload
             </div>
             <div className="connection-payload-panel">
-                {payload}
+                <JSONEditor json={payload}/>
             </div>
         </div>
     )
