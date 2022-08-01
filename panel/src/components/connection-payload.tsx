@@ -13,9 +13,6 @@ export const ConnectionPayload = (props: ConnectionPayloadProps) => {
 
     return (
         <div className="connection-payload">
-            <div className="connection-payload-controls">
-                Reqeust Payload
-            </div>
             <div className="connection-payload-panel">
                 <JSONEditor json={payload}/>
             </div>

@@ -9,7 +9,7 @@
             "https://*.flexport.internal/*"
         ],
         "js": ["html/dist/content/content-script.js"],
-        "run_at": "document_start"
+        "run_at": "document_end"
     }],
     "background": {
         "service_worker": "html/dist/background/background.js"

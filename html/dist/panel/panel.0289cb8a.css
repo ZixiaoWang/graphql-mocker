@@ -1,11 +1,11 @@
 .json-row {
+  padding: 2px 0;
   display: table-row;
 }
 
 .json-row-index {
-  color: #fff;
-  background-color: #333;
   padding: 0 8px;
+  font-weight: 600;
   display: table-cell;
 }
 
@@ -25,9 +25,14 @@ html, body {
 }
 
 .connection-list {
-  width: 100%;
   height: fit-content;
   border-spacing: 0;
+  flex: 1;
+}
+
+.connection-list thead {
+  position: sticky;
+  top: 0;
 }
 
 .connection-list th {
@@ -60,10 +65,14 @@ html, body {
   width: 750px;
   height: 100vh;
   border-left: 1px solid #333;
+  position: sticky;
+  top: 0;
+  right: 0;
 }
 
 .connection-detail-panel {
-  height: calc(100% - 30px);
+  height: calc(100% - 31px);
+  width: 100%;
   overflow: auto;
 }
 

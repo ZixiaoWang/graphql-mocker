@@ -12,8 +12,8 @@ export interface JSONEditorProps {
 
 export const JSONEditor = (props: JSONEditorProps) => {
     const { json, disabled, onChange} = props;
-    const jsonString = typeof json === "string" ? JSON.stringify(JSON.parse(json), null, 2) : JSON.stringify(json, null, 2);
-    const jsonRows = jsonString.replace(/\s/g, '\u00A0').split(/\r?\n|\\n/) || [""];
+    const jsonString = typeof json === "string" ? JSON.stringify(JSON.parse(json), null, 4) : JSON.stringify(json, null, 4);
+    const jsonRows = jsonString?.split(/\r?\n|\\n/g).map(row => row.replace(/\s/g, '\u00A0')) || [""];
 
     return (
         <div className="json-editor">

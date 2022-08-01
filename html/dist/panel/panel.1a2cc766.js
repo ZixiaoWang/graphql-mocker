@@ -545,11 +545,14 @@ const DevtoolsPanelApp = ()=>{
     const onItemClickHandler = (selectedConnection)=>{
         setFocusedConnection(selectedConnection);
     };
+    const onDetailPanelCloseHandler = ()=>{
+        setFocusedConnection(null);
+    };
     return /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection",
         __source: {
             fileName: "panel/src/panel.tsx",
-            lineNumber: 20,
+            lineNumber: 24,
             columnNumber: 9
         },
         __self: undefined
@@ -559,15 +562,16 @@ const DevtoolsPanelApp = ()=>{
         onClick: onItemClickHandler,
         __source: {
             fileName: "panel/src/panel.tsx",
-            lineNumber: 21,
+            lineNumber: 25,
             columnNumber: 13
         },
         __self: undefined
     }), focusedConnection && /*#__PURE__*/ (0, _preact.h)((0, _components.ConnectionDetail), {
         connection: focusedConnection,
+        onClose: onDetailPanelCloseHandler,
         __source: {
             fileName: "panel/src/panel.tsx",
-            lineNumber: 28,
+            lineNumber: 32,
             columnNumber: 17
         },
         __self: undefined
@@ -576,7 +580,7 @@ const DevtoolsPanelApp = ()=>{
 (0, _preact.render)(/*#__PURE__*/ (0, _preact.h)(DevtoolsPanelApp, {
     __source: {
         fileName: "panel/src/panel.tsx",
-        lineNumber: 35,
+        lineNumber: 42,
         columnNumber: 5
     },
     __self: undefined
@@ -1144,14 +1148,14 @@ const ConnectionList = ({ compact , connections , onClick  })=>{
             columnNumber: 21
         },
         __self: undefined
-    }, "Query"), /*#__PURE__*/ (0, _preact.h)("th", {
+    }, "Status"), /*#__PURE__*/ (0, _preact.h)("th", {
         __source: {
             fileName: "panel/src/components/connection-list.tsx",
             lineNumber: 30,
             columnNumber: 21
         },
         __self: undefined
-    }, "Status"), /*#__PURE__*/ (0, _preact.h)("th", {
+    }, "Query"), /*#__PURE__*/ (0, _preact.h)("th", {
         __source: {
             fileName: "panel/src/components/connection-list.tsx",
             lineNumber: 31,
@@ -1199,14 +1203,14 @@ const ConnectionList = ({ compact , connections , onClick  })=>{
                 columnNumber: 37
             },
             __self: undefined
-        }, (0, _panelHelper.getQueryName)(graphqlRequestBody.query) || graphqlRequestBody.query_hash), /*#__PURE__*/ (0, _preact.h)("td", {
+        }, response.status), /*#__PURE__*/ (0, _preact.h)("td", {
             __source: {
                 fileName: "panel/src/components/connection-list.tsx",
                 lineNumber: 45,
                 columnNumber: 37
             },
             __self: undefined
-        }, response.status), /*#__PURE__*/ (0, _preact.h)("td", {
+        }, (0, _panelHelper.getQueryName)(graphqlRequestBody.query) || graphqlRequestBody.query_hash), /*#__PURE__*/ (0, _preact.h)("td", {
             __source: {
                 fileName: "panel/src/components/connection-list.tsx",
                 lineNumber: 46,
@@ -1241,6 +1245,7 @@ var _preact = require("preact");
 var _hooks = require("preact/hooks");
 var _connectionHeader = require("./connection-header");
 var _connectionPayload = require("./connection-payload");
+var _connectionSetting = require("./connection-setting");
 const tabs = [
     {
         label: "Headers",
@@ -1259,7 +1264,7 @@ const tabs = [
         value: "SETTINGS"
     }
 ];
-const ConnectionDetail = ({ connection  })=>{
+const ConnectionDetail = ({ connection , onClose  })=>{
     const { request , response  } = connection;
     const [focusedTab, setFocusedTab] = (0, _hooks.useState)("HEADERS");
     const [content1, setContent] = (0, _hooks.useState)("{}");
@@ -1271,7 +1276,6 @@ const ConnectionDetail = ({ connection  })=>{
     const onTabClickHandler = (label)=>{
         setFocusedTab(label);
     };
-    console.log(content1);
     return /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-detail",
         __source: {
@@ -1290,6 +1294,7 @@ const ConnectionDetail = ({ connection  })=>{
         __self: undefined
     }, /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-detail-tab is-close",
+        onClick: onClose,
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
             lineNumber: 45,
@@ -1343,10 +1348,17 @@ const ConnectionDetail = ({ connection  })=>{
             columnNumber: 48
         },
         __self: undefined
+    }), focusedTab === "SETTINGS" && /*#__PURE__*/ (0, _preact.h)((0, _connectionSetting.ConnectionSetting), {
+        __source: {
+            fileName: "panel/src/components/connection-detail.tsx",
+            lineNumber: 64,
+            columnNumber: 48
+        },
+        __self: undefined
     })));
 };
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./connection-header":"9zgEq","./connection-payload":"bDzSx","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"9zgEq":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","./connection-header":"9zgEq","./connection-payload":"bDzSx","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","./connection-setting":"Begyj"}],"9zgEq":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionHeader", ()=>ConnectionHeader);
@@ -1456,18 +1468,10 @@ const ConnectionPayload = (props)=>{
         },
         __self: undefined
     }, /*#__PURE__*/ (0, _preact.h)("div", {
-        className: "connection-payload-controls",
-        __source: {
-            fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 16,
-            columnNumber: 13
-        },
-        __self: undefined
-    }, "Reqeust Payload"), /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-payload-panel",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 19,
+            lineNumber: 16,
             columnNumber: 13
         },
         __self: undefined
@@ -1475,7 +1479,7 @@ const ConnectionPayload = (props)=>{
         json: payload,
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 20,
+            lineNumber: 17,
             columnNumber: 17
         },
         __self: undefined
@@ -1489,8 +1493,8 @@ parcelHelpers.export(exports, "JSONEditor", ()=>JSONEditor);
 var _preact = require("preact");
 const JSONEditor = (props)=>{
     const { json , disabled , onChange  } = props;
-    const jsonString = typeof json === "string" ? JSON.stringify(JSON.parse(json), null, 2) : JSON.stringify(json, null, 2);
-    const jsonRows = jsonString.replace(/\s/g, "\xa0").split(/\r?\n|\\n/) || [
+    const jsonString = typeof json === "string" ? JSON.stringify(JSON.parse(json), null, 4) : JSON.stringify(json, null, 4);
+    const jsonRows = jsonString?.split(/\r?\n|\\n/g).map((row)=>row.replace(/\s/g, "\xa0")) || [
         ""
     ];
     return /*#__PURE__*/ (0, _preact.h)("div", {
@@ -1528,6 +1532,35 @@ const JSONEditor = (props)=>{
             __self: undefined
         }, row));
     }));
+};
+
+},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"Begyj":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ConnectionSetting", ()=>ConnectionSetting);
+var _preact = require("preact");
+const ConnectionSetting = ()=>{
+    const onButtonClickHandler = ()=>{
+        const message = "Setting button + " + Date.now().toString();
+        chrome.devtools.inspectedWindow.eval("console.log(`This is working`);");
+    };
+    return /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-setting",
+        __source: {
+            fileName: "panel/src/components/connection-setting.tsx",
+            lineNumber: 13,
+            columnNumber: 9
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("button", {
+        onClick: onButtonClickHandler,
+        __source: {
+            fileName: "panel/src/components/connection-setting.tsx",
+            lineNumber: 14,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, "Send message"));
 };
 
 },{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"8bgwM":[function(require,module,exports) {

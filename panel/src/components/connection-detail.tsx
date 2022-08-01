@@ -2,9 +2,11 @@ import { h } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { ConnectionHeader } from "./connection-header";
 import { ConnectionPayload } from "./connection-payload";
+import { ConnectionSetting } from "./connection-setting";
 
 export interface ConnectionDetailProp {
-    connection: chrome.devtools.network.Request
+    connection: chrome.devtools.network.Request,
+    onClose: () => void,
 }
 
 const tabs = [{
@@ -22,7 +24,7 @@ const tabs = [{
 }];
 
 
-export const ConnectionDetail = ({ connection }: ConnectionDetailProp) => {
+export const ConnectionDetail = ({ connection, onClose }: ConnectionDetailProp) => {
     const { request, response } = connection;
     const [focusedTab, setFocusedTab] = useState("HEADERS");
     const [content, setContent] = useState("{}");
@@ -37,12 +39,10 @@ export const ConnectionDetail = ({ connection }: ConnectionDetailProp) => {
         setFocusedTab(label);
     }
 
-    console.log(content)
-
     return (
         <div className="connection-detail">
             <div className="connection-detail-tabs">
-                <div className="connection-detail-tab is-close">
+                <div className="connection-detail-tab is-close" onClick={onClose}>
                 ╳
                 </div>
                 {
@@ -61,6 +61,7 @@ export const ConnectionDetail = ({ connection }: ConnectionDetailProp) => {
                 { focusedTab === "HEADERS" && <ConnectionHeader requestHeaders={request.headers} responseHeaders={response.headers} />}
                 { focusedTab === "PAYLOAD" && <ConnectionPayload type="REQUEST" payload={request.postData?.text || "{}"} />}
                 { focusedTab === "RESPONSE" && <ConnectionPayload type="RESPONSE" payload={content} />}
+                { focusedTab === "SETTINGS" && <ConnectionSetting />}
             </div>
         </div>
     )

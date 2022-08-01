@@ -16,6 +16,10 @@ const DevtoolsPanelApp = () => {
         setFocusedConnection(selectedConnection)
     }
 
+    const onDetailPanelCloseHandler = () => {
+        setFocusedConnection(null)
+    }
+
     return (
         <div className="connection">
             <ConnectionList 
@@ -25,7 +29,10 @@ const DevtoolsPanelApp = () => {
             />
             {
                 focusedConnection && 
-                <ConnectionDetail connection={focusedConnection} />
+                <ConnectionDetail 
+                    connection={focusedConnection} 
+                    onClose={onDetailPanelCloseHandler}
+                />
             }
         </div>
     )

@@ -5,11 +5,11 @@
 
     &-row {
         display: table-row;
+        padding: 2px 0px;
 
         &-index {
+            font-weight: 600;
             display: table-cell;
-            background-color: #333333;
-            color: white;
             padding: 0px 8px;
         }
 
