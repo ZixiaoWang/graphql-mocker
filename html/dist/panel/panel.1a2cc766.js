@@ -1358,7 +1358,7 @@ const ConnectionDetail = ({ connection , onClose  })=>{
     })));
 };
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./connection-header":"9zgEq","./connection-payload":"bDzSx","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","./connection-setting":"Begyj"}],"9zgEq":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","./connection-header":"9zgEq","./connection-payload":"bDzSx","./connection-setting":"Begyj","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"9zgEq":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionHeader", ()=>ConnectionHeader);

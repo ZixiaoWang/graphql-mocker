@@ -6,7 +6,8 @@
     "content_scripts": [{
         "matches": [
             "https://*.flexport.com/*",
-            "https://*.flexport.internal/*"
+            "https://*.flexport.internal/*",
+            "http://localhost:8081/*"
         ],
         "js": ["html/dist/content/content-script.js"],
         "run_at": "document_end"
