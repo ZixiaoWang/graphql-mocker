@@ -438,6 +438,7 @@ class ProxyMap {
 
 const proxyMap = new ProxyMap();
 
+console.log(window)
 if (window.ah && window.ah.proxy && typeof window.ah.proxy === "function") {
     console.log("XMLHttpRequest has been proxied");
 

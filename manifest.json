@@ -9,7 +9,10 @@
             "https://*.flexport.internal/*",
             "http://localhost:8081/*"
         ],
-        "js": ["html/dist/content/content-script.js"],
+        "js": [
+            "html/dist/content/inject.js",
+            "html/dist/content/content-script.js"
+        ],
         "run_at": "document_end"
     }],
     "background": {
