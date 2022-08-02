@@ -557,7 +557,7 @@ const DevtoolsPanelApp = ()=>{
         },
         __self: undefined
     }, /*#__PURE__*/ (0, _preact.h)((0, _components.ConnectionList), {
-        compact: Boolean(focusedConnection),
+        compact: !Boolean(focusedConnection),
         connections: graphqlReqeusts,
         onClick: onItemClickHandler,
         __source: {
@@ -567,6 +567,7 @@ const DevtoolsPanelApp = ()=>{
         },
         __self: undefined
     }), focusedConnection && /*#__PURE__*/ (0, _preact.h)((0, _components.ConnectionDetail), {
+        key: focusedConnection._request_id,
         connection: focusedConnection,
         onClose: onDetailPanelCloseHandler,
         __source: {
@@ -580,7 +581,7 @@ const DevtoolsPanelApp = ()=>{
 (0, _preact.render)(/*#__PURE__*/ (0, _preact.h)(DevtoolsPanelApp, {
     __source: {
         fileName: "panel/src/panel.tsx",
-        lineNumber: 42,
+        lineNumber: 43,
         columnNumber: 5
     },
     __self: undefined
@@ -1141,38 +1142,31 @@ const ConnectionList = ({ compact , connections , onClick  })=>{
             columnNumber: 21
         },
         __self: undefined
-    }, "#"), /*#__PURE__*/ (0, _preact.h)("th", {
+    }, "Status"), /*#__PURE__*/ (0, _preact.h)("th", {
         __source: {
             fileName: "panel/src/components/connection-list.tsx",
             lineNumber: 29,
             columnNumber: 21
         },
         __self: undefined
-    }, "Status"), /*#__PURE__*/ (0, _preact.h)("th", {
+    }, "Query"), compact && /*#__PURE__*/ (0, _preact.h)("th", {
         __source: {
             fileName: "panel/src/components/connection-list.tsx",
             lineNumber: 30,
-            columnNumber: 21
+            columnNumber: 33
         },
         __self: undefined
-    }, "Query"), /*#__PURE__*/ (0, _preact.h)("th", {
+    }, "Size"), compact && /*#__PURE__*/ (0, _preact.h)("th", {
         __source: {
             fileName: "panel/src/components/connection-list.tsx",
             lineNumber: 31,
-            columnNumber: 21
-        },
-        __self: undefined
-    }, "Size"), /*#__PURE__*/ (0, _preact.h)("th", {
-        __source: {
-            fileName: "panel/src/components/connection-list.tsx",
-            lineNumber: 32,
-            columnNumber: 21
+            columnNumber: 33
         },
         __self: undefined
     }, "Time")), /*#__PURE__*/ (0, _preact.h)("tbody", {
         __source: {
             fileName: "panel/src/components/connection-list.tsx",
-            lineNumber: 34,
+            lineNumber: 33,
             columnNumber: 17
         },
         __self: undefined
@@ -1185,43 +1179,36 @@ const ConnectionList = ({ compact , connections , onClick  })=>{
             onClick: ()=>onClickHandler(connection),
             __source: {
                 fileName: "panel/src/components/connection-list.tsx",
-                lineNumber: 41,
+                lineNumber: 40,
                 columnNumber: 33
             },
             __self: undefined
         }, /*#__PURE__*/ (0, _preact.h)("td", {
             __source: {
                 fileName: "panel/src/components/connection-list.tsx",
-                lineNumber: 43,
-                columnNumber: 37
-            },
-            __self: undefined
-        }, index), /*#__PURE__*/ (0, _preact.h)("td", {
-            __source: {
-                fileName: "panel/src/components/connection-list.tsx",
-                lineNumber: 44,
+                lineNumber: 42,
                 columnNumber: 37
             },
             __self: undefined
         }, response.status), /*#__PURE__*/ (0, _preact.h)("td", {
             __source: {
                 fileName: "panel/src/components/connection-list.tsx",
+                lineNumber: 43,
+                columnNumber: 37
+            },
+            __self: undefined
+        }, (0, _panelHelper.getQueryName)(graphqlRequestBody.query) || graphqlRequestBody.query_hash), compact && /*#__PURE__*/ (0, _preact.h)("td", {
+            __source: {
+                fileName: "panel/src/components/connection-list.tsx",
+                lineNumber: 44,
+                columnNumber: 49
+            },
+            __self: undefined
+        }, response.content.size), compact && /*#__PURE__*/ (0, _preact.h)("td", {
+            __source: {
+                fileName: "panel/src/components/connection-list.tsx",
                 lineNumber: 45,
-                columnNumber: 37
-            },
-            __self: undefined
-        }, (0, _panelHelper.getQueryName)(graphqlRequestBody.query) || graphqlRequestBody.query_hash), /*#__PURE__*/ (0, _preact.h)("td", {
-            __source: {
-                fileName: "panel/src/components/connection-list.tsx",
-                lineNumber: 46,
-                columnNumber: 37
-            },
-            __self: undefined
-        }, response.content.size), /*#__PURE__*/ (0, _preact.h)("td", {
-            __source: {
-                fileName: "panel/src/components/connection-list.tsx",
-                lineNumber: 47,
-                columnNumber: 37
+                columnNumber: 49
             },
             __self: undefined
         }, time));
@@ -1508,6 +1495,7 @@ const JSONEditor = (props)=>{
     }, jsonRows.map((row, index)=>{
         return /*#__PURE__*/ (0, _preact.h)("div", {
             className: "json-row",
+            onChange: (event)=>console.log(event),
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
                 lineNumber: 22,
@@ -1524,6 +1512,7 @@ const JSONEditor = (props)=>{
             __self: undefined
         }, index + 1), /*#__PURE__*/ (0, _preact.h)("div", {
             className: "json-row-content",
+            contentEditable: true,
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
                 lineNumber: 24,
@@ -1542,13 +1531,16 @@ var _preact = require("preact");
 const ConnectionSetting = ()=>{
     const onButtonClickHandler = ()=>{
         const message = "Setting button + " + Date.now().toString();
-        chrome.devtools.inspectedWindow.eval("console.log(`This is working`);");
+        chrome.devtools.inspectedWindow.eval(`
+                console.log("message comes from panel setting");
+                console.log(window.ah);
+            `);
     };
     return /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-setting",
         __source: {
             fileName: "panel/src/components/connection-setting.tsx",
-            lineNumber: 13,
+            lineNumber: 16,
             columnNumber: 9
         },
         __self: undefined
@@ -1556,7 +1548,7 @@ const ConnectionSetting = ()=>{
         onClick: onButtonClickHandler,
         __source: {
             fileName: "panel/src/components/connection-setting.tsx",
-            lineNumber: 14,
+            lineNumber: 17,
             columnNumber: 13
         },
         __self: undefined

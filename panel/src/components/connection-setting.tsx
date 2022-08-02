@@ -5,7 +5,10 @@ export const ConnectionSetting = () => {
     const onButtonClickHandler = () => {
         const message: string = "Setting button + " + Date.now().toString();
         chrome.devtools.inspectedWindow.eval(
-            "console.log(`This is working`);"
+            `
+                console.log("message comes from panel setting");
+                console.log(window.ah);
+            `
         )
     }
 

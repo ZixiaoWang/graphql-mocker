@@ -19,9 +19,9 @@ export const JSONEditor = (props: JSONEditorProps) => {
         <div className="json-editor">
             {jsonRows.map((row: string, index: number) => {
                 return (
-                    <div className="json-row">
+                    <div className="json-row" onChange={event => console.log(event)}>
                         <div className="json-row-index">{index+1}</div>
-                        <div className="json-row-content">{row}</div>
+                        <div className="json-row-content" contentEditable={true}>{row}</div>
                     </div>
                 )
             })}

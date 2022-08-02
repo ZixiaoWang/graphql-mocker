@@ -25,11 +25,10 @@ export const ConnectionList = ({ compact, connections, onClick }: ConnectionList
         <Fragment>
             <table className="connection-list" frameBorder={1}>
                 <thead>
-                    <th>#</th>
                     <th>Status</th>
                     <th>Query</th>
-                    <th>Size</th>
-                    <th>Time</th>
+                    {compact && <th>Size</th>}
+                    {compact && <th>Time</th>}
                 </thead>
                 <tbody>
                     {
@@ -40,11 +39,10 @@ export const ConnectionList = ({ compact, connections, onClick }: ConnectionList
                             return (
                                 <tr className="connection-list-item" 
                                     onClick={() => onClickHandler(connection)}>
-                                    <td>{index}</td>
                                     <td>{response.status}</td>
                                     <td>{getQueryName(graphqlRequestBody.query) || graphqlRequestBody.query_hash}</td>
-                                    <td>{response.content.size}</td>
-                                    <td>{time}</td>
+                                    {compact && <td>{response.content.size}</td>}
+                                    {compact && <td>{time}</td>}
                                 </tr>
                             )
                         })

@@ -23,13 +23,14 @@ const DevtoolsPanelApp = () => {
     return (
         <div className="connection">
             <ConnectionList 
-                compact={Boolean(focusedConnection)}
+                compact={!Boolean(focusedConnection)}
                 connections={graphqlReqeusts} 
                 onClick={onItemClickHandler}
             />
             {
                 focusedConnection && 
-                <ConnectionDetail 
+                <ConnectionDetail
+                    key={focusedConnection._request_id}
                     connection={focusedConnection} 
                     onClose={onDetailPanelCloseHandler}
                 />

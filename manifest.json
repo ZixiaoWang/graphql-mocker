@@ -10,10 +10,9 @@
             "http://localhost:8081/*"
         ],
         "js": [
-            "html/dist/content/inject.js",
             "html/dist/content/content-script.js"
         ],
-        "run_at": "document_end"
+        "run_at": "document_start"
     }],
     "background": {
         "service_worker": "html/dist/background/background.js"
@@ -25,6 +24,17 @@
         "declarativeNetRequest",
         "declarativeNetRequestFeedback"
     ],
+    "web_accessible_resources": [{
+        "resources": [
+            "html/dist/content/inject.js",
+            "html/dist/content/content-script.js"
+        ],
+        "matches": [
+            "https://*.flexport.com/*",
+            "https://*.flexport.internal/*",
+            "http://localhost:8081/*"
+        ]
+    }],
     "action": {
         "default_title": "Click to see all the graphql requests",
         "default_popup": "html/dist/popup/popup.html",
