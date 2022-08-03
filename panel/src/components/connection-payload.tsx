@@ -1,19 +1,43 @@
 import { h } from "preact";
 import { useState, useEffect } from "preact/hooks";
+import { getQueryName } from "../panel.helper";
+import { stroageService } from "../storage.service";
 import { JSONEditor } from "./json-editor";
 
 export interface ConnectionPayloadProps {
     editable?: boolean,
-    payload: string,
+    connection: chrome.devtools.network.Request,
 }
 
 export const ConnectionPayload = (props: ConnectionPayloadProps) => {
-    const { editable, payload } = props;
-    const [showRawPayload, setShowRawPayload] = useState(false);
+    const { editable, connection } = props;
+    const [content, setContent] = useState("{}");
+    const [mockedContent, setMockedContent] = useState(content);
     const [ifMock, setIfMock] = useState(false);
 
+    const key: string = [connection.request.url, connection.request.postData?.text || ""].filter(Boolean).join("::");
+
+    useEffect(() => {
+        connection.getContent((content: string) => {
+            setContent(content);
+        })
+    }, [connection]);
+
     const onMockResponseToggleHandler = (event: Event) => {
-        setIfMock(!ifMock);
+        const mock: boolean = !ifMock;
+        if (mock) {
+            stroageService.updateCacheByKey(key, content);
+            setMockedContent(content);
+        } else {
+            stroageService.removeCacheByKey(key);
+        }
+        setIfMock(mock);
+    }
+
+    const onMockContentChangeHandler = (mockedContentString: string) => {
+        try {
+            const mockedResponse: any = JSON.parse(mockedContentString);
+        } catch (e) {}
     }
 
     return (
@@ -27,7 +51,11 @@ export const ConnectionPayload = (props: ConnectionPayloadProps) => {
                 </div>
             )}
             <div className="connection-payload-panel">
-                <JSONEditor editable={editable && ifMock} json={payload}/>
+                <JSONEditor 
+                    editable={editable && ifMock} 
+                    json={content}
+                    onChange={onMockContentChangeHandler}
+                />
             </div>
         </div>
     )

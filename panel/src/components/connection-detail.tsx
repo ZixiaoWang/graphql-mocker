@@ -1,5 +1,6 @@
 import { h } from "preact";
 import { useEffect, useState } from "preact/hooks";
+import { ConnectionRequest } from ".";
 import { ConnectionHeader } from "./connection-header";
 import { ConnectionPayload } from "./connection-payload";
 import { ConnectionSetting } from "./connection-setting";
@@ -27,13 +28,6 @@ const tabs = [{
 export const ConnectionDetail = ({ connection, onClose }: ConnectionDetailProp) => {
     const { request, response } = connection;
     const [focusedTab, setFocusedTab] = useState("HEADERS");
-    const [content, setContent] = useState("{}");
-
-    useEffect(() => {
-        connection.getContent((content: string) => {
-            setContent(content);
-        })
-    }, [connection]);
 
     const onTabClickHandler = (label: string) => {
         setFocusedTab(label);
@@ -59,8 +53,8 @@ export const ConnectionDetail = ({ connection, onClose }: ConnectionDetailProp) 
             </div>
             <div className="connection-detail-panel">
                 { focusedTab === "HEADERS" && <ConnectionHeader requestHeaders={request.headers} responseHeaders={response.headers} />}
-                { focusedTab === "PAYLOAD" && <ConnectionPayload payload={request.postData?.text || "{}"} />}
-                { focusedTab === "RESPONSE" && <ConnectionPayload editable={true} payload={content} />}
+                { focusedTab === "PAYLOAD" && <ConnectionRequest payload={request.postData?.text || "{}"} />}
+                { focusedTab === "RESPONSE" && <ConnectionPayload editable={true} connection={connection} />}
                 { focusedTab === "SETTINGS" && <ConnectionSetting />}
             </div>
         </div>

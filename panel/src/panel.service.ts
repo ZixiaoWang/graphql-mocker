@@ -1,4 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
+import { BaseService } from "./base.service";
 
 declare global {
     interface Window {
@@ -8,11 +9,11 @@ declare global {
 
 type FilterFunction<T> = (value: T, index: number, array: T[]) => boolean;
 
-export class PanelService {
-    private callbacks: Set<Function> = new Set();
+export class PanelService extends BaseService {
     private connections: chrome.devtools.network.Request[] = [];
 
     constructor() {
+        super();
         window.panelService = this;
     }
 
@@ -29,26 +30,6 @@ export class PanelService {
         }
 
         return filteredConnections;
-    }
-
-    register(callback: Function): void {
-        this.callbacks.add(callback);
-    }
-
-    unregister(callback: Function): void {
-        this.callbacks.delete(callback);
-    }
-
-    notify(...args: any[]): void {
-        this.callbacks.forEach((callback: Function) => {
-            if (callback && typeof callback === "function") {
-                if (args.length === 0) {
-                    callback(Math.random());
-                } else {
-                    callback(...args);
-                }
-            }
-        })
     }
 }
 

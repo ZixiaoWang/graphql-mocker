@@ -590,7 +590,7 @@ chrome.devtools.network.onRequestFinished.addListener((networkRequest)=>{
     (0, _panelService.panelService).push(networkRequest);
 });
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./components":"g6522","./panel.pipe":"8bgwM","./panel.service":"9Vd86","./panel.scss":"ekLgM"}],"cwEwC":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","./components":"g6522","./panel.pipe":"8bgwM","./panel.service":"8Gwoz","./panel.scss":"ekLgM"}],"cwEwC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "render", ()=>P);
@@ -1093,8 +1093,19 @@ var _connectionList = require("./connection-list");
 parcelHelpers.exportAll(_connectionList, exports);
 var _connectionDetail = require("./connection-detail");
 parcelHelpers.exportAll(_connectionDetail, exports);
+var _connectionHeader = require("./connection-header");
+parcelHelpers.exportAll(_connectionHeader, exports);
+parcelHelpers.exportAll(_connectionList, exports);
+var _connectionPayload = require("./connection-payload");
+parcelHelpers.exportAll(_connectionPayload, exports);
+var _connectionRequest = require("./connection-request");
+parcelHelpers.exportAll(_connectionRequest, exports);
+var _connectionSetting = require("./connection-setting");
+parcelHelpers.exportAll(_connectionSetting, exports);
+var _jsonEditor = require("./json-editor");
+parcelHelpers.exportAll(_jsonEditor, exports);
 
-},{"./connection-list":"7zVZ4","./connection-detail":"5dezv","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"7zVZ4":[function(require,module,exports) {
+},{"./connection-list":"7zVZ4","./connection-detail":"5dezv","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","./connection-header":"9zgEq","./connection-payload":"bDzSx","./connection-request":"cveAZ","./connection-setting":"Begyj","./json-editor":"hQUEq"}],"7zVZ4":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionList", ()=>ConnectionList);
@@ -1230,6 +1241,7 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionDetail", ()=>ConnectionDetail);
 var _preact = require("preact");
 var _hooks = require("preact/hooks");
+var _ = require(".");
 var _connectionHeader = require("./connection-header");
 var _connectionPayload = require("./connection-payload");
 var _connectionSetting = require("./connection-setting");
@@ -1254,14 +1266,6 @@ const tabs = [
 const ConnectionDetail = ({ connection , onClose  })=>{
     const { request , response  } = connection;
     const [focusedTab, setFocusedTab] = (0, _hooks.useState)("HEADERS");
-    const [content1, setContent] = (0, _hooks.useState)("{}");
-    (0, _hooks.useEffect)(()=>{
-        connection.getContent((content)=>{
-            setContent(content);
-        });
-    }, [
-        connection
-    ]);
     const onTabClickHandler = (label)=>{
         setFocusedTab(label);
     };
@@ -1269,7 +1273,7 @@ const ConnectionDetail = ({ connection , onClose  })=>{
         className: "connection-detail",
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
-            lineNumber: 43,
+            lineNumber: 37,
             columnNumber: 9
         },
         __self: undefined
@@ -1277,7 +1281,7 @@ const ConnectionDetail = ({ connection , onClose  })=>{
         className: "connection-detail-tabs",
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
-            lineNumber: 44,
+            lineNumber: 38,
             columnNumber: 13
         },
         __self: undefined
@@ -1286,7 +1290,7 @@ const ConnectionDetail = ({ connection , onClose  })=>{
         onClick: onClose,
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
-            lineNumber: 45,
+            lineNumber: 39,
             columnNumber: 17
         },
         __self: undefined
@@ -1297,7 +1301,7 @@ const ConnectionDetail = ({ connection , onClose  })=>{
             onClick: ()=>onTabClickHandler(tab.value),
             __source: {
                 fileName: "panel/src/components/connection-detail.tsx",
-                lineNumber: 51,
+                lineNumber: 45,
                 columnNumber: 29
             },
             __self: undefined
@@ -1306,7 +1310,7 @@ const ConnectionDetail = ({ connection , onClose  })=>{
         className: "connection-detail-panel",
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
-            lineNumber: 60,
+            lineNumber: 54,
             columnNumber: 13
         },
         __self: undefined
@@ -1315,38 +1319,38 @@ const ConnectionDetail = ({ connection , onClose  })=>{
         responseHeaders: response.headers,
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
-            lineNumber: 61,
+            lineNumber: 55,
             columnNumber: 47
         },
         __self: undefined
-    }), focusedTab === "PAYLOAD" && /*#__PURE__*/ (0, _preact.h)((0, _connectionPayload.ConnectionPayload), {
+    }), focusedTab === "PAYLOAD" && /*#__PURE__*/ (0, _preact.h)((0, _.ConnectionRequest), {
         payload: request.postData?.text || "{}",
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
-            lineNumber: 62,
+            lineNumber: 56,
             columnNumber: 47
         },
         __self: undefined
     }), focusedTab === "RESPONSE" && /*#__PURE__*/ (0, _preact.h)((0, _connectionPayload.ConnectionPayload), {
         editable: true,
-        payload: content1,
+        connection: connection,
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
-            lineNumber: 63,
+            lineNumber: 57,
             columnNumber: 48
         },
         __self: undefined
     }), focusedTab === "SETTINGS" && /*#__PURE__*/ (0, _preact.h)((0, _connectionSetting.ConnectionSetting), {
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
-            lineNumber: 64,
+            lineNumber: 58,
             columnNumber: 48
         },
         __self: undefined
     })));
 };
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./connection-header":"9zgEq","./connection-payload":"bDzSx","./connection-setting":"Begyj","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"9zgEq":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","./connection-header":"9zgEq","./connection-payload":"bDzSx","./connection-setting":"Begyj","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh",".":"g6522"}],"9zgEq":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionHeader", ()=>ConnectionHeader);
@@ -1443,19 +1447,42 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionPayload", ()=>ConnectionPayload);
 var _preact = require("preact");
 var _hooks = require("preact/hooks");
+var _storageService = require("../storage.service");
 var _jsonEditor = require("./json-editor");
 const ConnectionPayload = (props)=>{
-    const { editable , payload  } = props;
-    const [showRawPayload, setShowRawPayload] = (0, _hooks.useState)(false);
+    const { editable , connection  } = props;
+    const [content1, setContent] = (0, _hooks.useState)("{}");
+    const [mockedContent, setMockedContent] = (0, _hooks.useState)(content1);
     const [ifMock, setIfMock] = (0, _hooks.useState)(false);
+    const key = [
+        connection.request.url,
+        connection.request.postData?.text || ""
+    ].filter(Boolean).join("::");
+    (0, _hooks.useEffect)(()=>{
+        connection.getContent((content)=>{
+            setContent(content);
+        });
+    }, [
+        connection
+    ]);
     const onMockResponseToggleHandler = (event)=>{
-        setIfMock(!ifMock);
+        const mock = !ifMock;
+        if (mock) {
+            (0, _storageService.stroageService).updateCacheByKey(key, content1);
+            setMockedContent(content1);
+        } else (0, _storageService.stroageService).removeCacheByKey(key);
+        setIfMock(mock);
+    };
+    const onMockContentChangeHandler = (mockedContentString)=>{
+        try {
+            const mockedResponse = JSON.parse(mockedContentString);
+        } catch (e) {}
     };
     return /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-payload",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 20,
+            lineNumber: 44,
             columnNumber: 9
         },
         __self: undefined
@@ -1463,7 +1490,7 @@ const ConnectionPayload = (props)=>{
         className: "connection-payload-controls",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 22,
+            lineNumber: 46,
             columnNumber: 17
         },
         __self: undefined
@@ -1472,7 +1499,7 @@ const ConnectionPayload = (props)=>{
         class: "connection-payload-control",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 23,
+            lineNumber: 47,
             columnNumber: 21
         },
         __self: undefined
@@ -1484,14 +1511,14 @@ const ConnectionPayload = (props)=>{
         onChange: onMockResponseToggleHandler,
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 24,
+            lineNumber: 48,
             columnNumber: 25
         },
         __self: undefined
     }), /*#__PURE__*/ (0, _preact.h)("span", {
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 25,
+            lineNumber: 49,
             columnNumber: 25
         },
         __self: undefined
@@ -1499,23 +1526,24 @@ const ConnectionPayload = (props)=>{
         className: "connection-payload-panel",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 29,
+            lineNumber: 53,
             columnNumber: 13
         },
         __self: undefined
     }, /*#__PURE__*/ (0, _preact.h)((0, _jsonEditor.JSONEditor), {
         editable: editable && ifMock,
-        json: payload,
+        json: content1,
+        onChange: onMockContentChangeHandler,
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 30,
+            lineNumber: 54,
             columnNumber: 17
         },
         __self: undefined
     })));
 };
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./json-editor":"hQUEq","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"hQUEq":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","./json-editor":"hQUEq","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../storage.service":"7mNQr"}],"hQUEq":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "JSONEditor", ()=>JSONEditor);
@@ -1526,17 +1554,36 @@ const JSONEditor = (props)=>{
     const jsonRows = jsonString?.split(/\r?\n|\\n/g).map((row)=>row.replace(/\s/g, "\xa0")) || [
         ""
     ];
-    const contentRowProps = editable ? {
-        className: "json-row-content",
-        contentEditable: true
-    } : {
-        className: "json-row-content"
+    const onMockedResponseChangeHandler = (event)=>{
+        const newValue = event.target.value || "";
+        if (onChange && typeof onChange === "function") onChange(newValue);
     };
+    if (editable) return /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "json-editor",
+        __source: {
+            fileName: "panel/src/components/json-editor.tsx",
+            lineNumber: 27,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("textarea", {
+        className: "json-content-editor",
+        name: "json-content-editor",
+        id: "jsoneditor",
+        onChange: onMockedResponseChangeHandler,
+        value: jsonString,
+        __source: {
+            fileName: "panel/src/components/json-editor.tsx",
+            lineNumber: 28,
+            columnNumber: 17
+        },
+        __self: undefined
+    }));
     return /*#__PURE__*/ (0, _preact.h)("div", {
         className: "json-editor",
         __source: {
             fileName: "panel/src/components/json-editor.tsx",
-            lineNumber: 21,
+            lineNumber: 40,
             columnNumber: 9
         },
         __self: undefined
@@ -1546,7 +1593,7 @@ const JSONEditor = (props)=>{
             onChange: (event)=>console.log(event),
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
-                lineNumber: 24,
+                lineNumber: 43,
                 columnNumber: 21
             },
             __self: undefined
@@ -1554,15 +1601,15 @@ const JSONEditor = (props)=>{
             className: "json-row-index",
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
-                lineNumber: 25,
+                lineNumber: 44,
                 columnNumber: 25
             },
             __self: undefined
         }, index + 1), /*#__PURE__*/ (0, _preact.h)("div", {
-            ...contentRowProps,
+            className: "json-row-content",
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
-                lineNumber: 26,
+                lineNumber: 45,
                 columnNumber: 25
             },
             __self: undefined
@@ -1570,7 +1617,72 @@ const JSONEditor = (props)=>{
     }));
 };
 
-},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"Begyj":[function(require,module,exports) {
+},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"7mNQr":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "StorageService", ()=>StorageService);
+parcelHelpers.export(exports, "stroageService", ()=>stroageService);
+var _baseService = require("./base.service");
+class StorageService extends (0, _baseService.BaseService) {
+    cache = {};
+    domain = "";
+    constructor(){
+        super();
+        window.storageService = this;
+    }
+    init(domain) {
+        this.domain = domain;
+        chrome.storage.local.get(this.domain, (item)=>{
+            this.cache = item || {};
+        });
+    }
+    updateCacheByKey(key, value, config) {
+        this.cache[key] = {
+            value,
+            config
+        };
+        chrome.storage.local.set({
+            [this.domain]: this.cache
+        });
+    }
+    getCacheByKey(key) {
+        if (this.cache[key]) return this.cache[key].value || "";
+        return null;
+    }
+    removeCacheByKey(key) {
+        delete this.cache[key];
+        chrome.storage.local.remove(key);
+    }
+    clear() {
+        this.cache = {};
+        chrome.storage.local.clear();
+    }
+}
+const stroageService = new StorageService();
+
+},{"./base.service":"4DEKG","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"4DEKG":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "BaseService", ()=>BaseService);
+class BaseService {
+    callbacks = new Set();
+    register(callback) {
+        this.callbacks.add(callback);
+    }
+    unregister(callback) {
+        this.callbacks.delete(callback);
+    }
+    notify(...args) {
+        this.callbacks.forEach((callback)=>{
+            if (callback && typeof callback === "function") {
+                if (args.length === 0) callback(Math.random());
+                else callback(...args);
+            }
+        });
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"Begyj":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionSetting", ()=>ConnectionSetting);
@@ -1602,7 +1714,42 @@ const ConnectionSetting = ()=>{
     }, "Send message"));
 };
 
-},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"8bgwM":[function(require,module,exports) {
+},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"cveAZ":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ConnectionRequest", ()=>ConnectionRequest);
+var _preact = require("preact");
+var _jsonEditor = require("./json-editor");
+const ConnectionRequest = (props)=>{
+    const { payload  } = props;
+    return /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-payload",
+        __source: {
+            fileName: "panel/src/components/connection-request.tsx",
+            lineNumber: 12,
+            columnNumber: 9
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-payload-panel",
+        __source: {
+            fileName: "panel/src/components/connection-request.tsx",
+            lineNumber: 13,
+            columnNumber: 13
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)((0, _jsonEditor.JSONEditor), {
+        json: payload,
+        __source: {
+            fileName: "panel/src/components/connection-request.tsx",
+            lineNumber: 14,
+            columnNumber: 17
+        },
+        __self: undefined
+    })));
+};
+
+},{"preact":"cwEwC","./json-editor":"hQUEq","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"8bgwM":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "GRAPHQL_ONLY", ()=>GRAPHQL_ONLY);
@@ -1615,17 +1762,18 @@ const GRAPHQL_ONLY = (networkRequest)=>{
     return false;
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"9Vd86":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"8Gwoz":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PanelService", ()=>PanelService);
 parcelHelpers.export(exports, "panelService", ()=>panelService);
 parcelHelpers.export(exports, "usePanelService", ()=>usePanelService);
 var _hooks = require("preact/hooks");
-class PanelService {
-    callbacks = new Set();
+var _baseService = require("./base.service");
+class PanelService extends (0, _baseService.BaseService) {
     connections = [];
     constructor(){
+        super();
         window.panelService = this;
     }
     push(connection) {
@@ -1636,20 +1784,6 @@ class PanelService {
         let filteredConnections = this.connections;
         for (const pipe of pipes)filteredConnections = filteredConnections.filter(pipe);
         return filteredConnections;
-    }
-    register(callback) {
-        this.callbacks.add(callback);
-    }
-    unregister(callback) {
-        this.callbacks.delete(callback);
-    }
-    notify(...args) {
-        this.callbacks.forEach((callback)=>{
-            if (callback && typeof callback === "function") {
-                if (args.length === 0) callback(Math.random());
-                else callback(...args);
-            }
-        });
     }
 }
 const panelService = new PanelService();
@@ -1662,5 +1796,5 @@ const usePanelService = ()=>{
     return panelService;
 };
 
-},{"preact/hooks":"97VL9","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"ekLgM":[function() {},{}]},["gPSfo","es34I"], "es34I", "parcelRequire1284")
+},{"preact/hooks":"97VL9","./base.service":"4DEKG","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"ekLgM":[function() {},{}]},["gPSfo","es34I"], "es34I", "parcelRequire1284")
 
