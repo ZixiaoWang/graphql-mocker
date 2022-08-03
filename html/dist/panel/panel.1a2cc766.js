@@ -1259,7 +1259,9 @@ const ConnectionDetail = ({ connection , onClose  })=>{
         connection.getContent((content)=>{
             setContent(content);
         });
-    }, []);
+    }, [
+        connection
+    ]);
     const onTabClickHandler = (label)=>{
         setFocusedTab(label);
     };
@@ -1445,11 +1447,15 @@ var _jsonEditor = require("./json-editor");
 const ConnectionPayload = (props)=>{
     const { editable , payload  } = props;
     const [showRawPayload, setShowRawPayload] = (0, _hooks.useState)(false);
+    const [ifMock, setIfMock] = (0, _hooks.useState)(false);
+    const onMockResponseToggleHandler = (event)=>{
+        setIfMock(!ifMock);
+    };
     return /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-payload",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 15,
+            lineNumber: 20,
             columnNumber: 9
         },
         __self: undefined
@@ -1457,23 +1463,52 @@ const ConnectionPayload = (props)=>{
         className: "connection-payload-controls",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 17,
+            lineNumber: 22,
             columnNumber: 17
         },
         __self: undefined
-    }), /*#__PURE__*/ (0, _preact.h)("div", {
+    }, /*#__PURE__*/ (0, _preact.h)("label", {
+        htmlFor: "mock",
+        class: "connection-payload-control",
+        __source: {
+            fileName: "panel/src/components/connection-payload.tsx",
+            lineNumber: 23,
+            columnNumber: 21
+        },
+        __self: undefined
+    }, /*#__PURE__*/ (0, _preact.h)("input", {
+        type: "checkbox",
+        name: "mock",
+        id: "mock",
+        checked: ifMock,
+        onChange: onMockResponseToggleHandler,
+        __source: {
+            fileName: "panel/src/components/connection-payload.tsx",
+            lineNumber: 24,
+            columnNumber: 25
+        },
+        __self: undefined
+    }), /*#__PURE__*/ (0, _preact.h)("span", {
+        __source: {
+            fileName: "panel/src/components/connection-payload.tsx",
+            lineNumber: 25,
+            columnNumber: 25
+        },
+        __self: undefined
+    }, "Mock response"))), /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-payload-panel",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 21,
+            lineNumber: 29,
             columnNumber: 13
         },
         __self: undefined
     }, /*#__PURE__*/ (0, _preact.h)((0, _jsonEditor.JSONEditor), {
+        editable: editable && ifMock,
         json: payload,
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 22,
+            lineNumber: 30,
             columnNumber: 17
         },
         __self: undefined
@@ -1486,16 +1521,22 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "JSONEditor", ()=>JSONEditor);
 var _preact = require("preact");
 const JSONEditor = (props)=>{
-    const { json , disabled , onChange  } = props;
+    const { json , editable , onChange  } = props;
     const jsonString = typeof json === "string" ? JSON.stringify(JSON.parse(json), null, 4) : JSON.stringify(json, null, 4);
     const jsonRows = jsonString?.split(/\r?\n|\\n/g).map((row)=>row.replace(/\s/g, "\xa0")) || [
         ""
     ];
+    const contentRowProps = editable ? {
+        className: "json-row-content",
+        contentEditable: true
+    } : {
+        className: "json-row-content"
+    };
     return /*#__PURE__*/ (0, _preact.h)("div", {
         className: "json-editor",
         __source: {
             fileName: "panel/src/components/json-editor.tsx",
-            lineNumber: 19,
+            lineNumber: 21,
             columnNumber: 9
         },
         __self: undefined
@@ -1505,7 +1546,7 @@ const JSONEditor = (props)=>{
             onChange: (event)=>console.log(event),
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
-                lineNumber: 22,
+                lineNumber: 24,
                 columnNumber: 21
             },
             __self: undefined
@@ -1513,16 +1554,15 @@ const JSONEditor = (props)=>{
             className: "json-row-index",
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
-                lineNumber: 23,
+                lineNumber: 25,
                 columnNumber: 25
             },
             __self: undefined
         }, index + 1), /*#__PURE__*/ (0, _preact.h)("div", {
-            className: "json-row-content",
-            contentEditable: true,
+            ...contentRowProps,
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
-                lineNumber: 24,
+                lineNumber: 26,
                 columnNumber: 25
             },
             __self: undefined

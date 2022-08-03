@@ -33,7 +33,7 @@ export const ConnectionDetail = ({ connection, onClose }: ConnectionDetailProp) 
         connection.getContent((content: string) => {
             setContent(content);
         })
-    }, []);
+    }, [connection]);
 
     const onTabClickHandler = (label: string) => {
         setFocusedTab(label);
