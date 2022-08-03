@@ -396,6 +396,18 @@
   };
 })(window);
 
+const getQueryName = (queryString) => {
+    if (!queryString) {
+        return null;
+    }
+
+    return queryString
+        .split("{")[0]
+        .split("(")[0]
+        .trim()
+        .split(" ")[1] || null;
+}
+
 class ProxyMap {
   constructor() {
     this.map = new Map();
@@ -407,7 +419,7 @@ class ProxyMap {
         const url = config.url.indexOf("/") === 0 ? { pathname: config.url } : new URL(config.url);
         if (url.pathname === "/graphql" && config.method === "POST") {
           const requestBody = JSON.parse(config.body);
-          const query = requestBody.query || requestBody.query_hash;
+          const query = getQueryName(requestBody.query) || requestBody.query_hash;
           return this.map.get(query);
         }
       } catch (error) {
@@ -442,11 +454,13 @@ const proxyMap = new ProxyMap();
 
 if (window.ah && window.ah.proxy && typeof window.ah.proxy === "function") {
   console.log("%cXMLHttpRequest has been proxied", "color: white; background-color: green; display: inline-block; padding: 2px 4px; border-radius: 4px;");
+
   const onRequestHandler = (config, handler) => {
     const query = proxyMap.getQueryFromConfig(config);
     return handler.next(config);
   };
 
+  window.ah.proxyMap = proxyMap;
   window.ah.proxy({ onRequest: onRequestHandler });
   window.ah.fetchProxy({ onRequest: onRequestHandler });
 }

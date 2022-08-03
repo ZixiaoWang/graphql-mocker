@@ -59,8 +59,8 @@ export const ConnectionDetail = ({ connection, onClose }: ConnectionDetailProp) 
             </div>
             <div className="connection-detail-panel">
                 { focusedTab === "HEADERS" && <ConnectionHeader requestHeaders={request.headers} responseHeaders={response.headers} />}
-                { focusedTab === "PAYLOAD" && <ConnectionPayload type="REQUEST" payload={request.postData?.text || "{}"} />}
-                { focusedTab === "RESPONSE" && <ConnectionPayload type="RESPONSE" payload={content} />}
+                { focusedTab === "PAYLOAD" && <ConnectionPayload payload={request.postData?.text || "{}"} />}
+                { focusedTab === "RESPONSE" && <ConnectionPayload editable={true} payload={content} />}
                 { focusedTab === "SETTINGS" && <ConnectionSetting />}
             </div>
         </div>

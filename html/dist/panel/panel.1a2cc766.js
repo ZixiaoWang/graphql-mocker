@@ -1318,7 +1318,6 @@ const ConnectionDetail = ({ connection , onClose  })=>{
         },
         __self: undefined
     }), focusedTab === "PAYLOAD" && /*#__PURE__*/ (0, _preact.h)((0, _connectionPayload.ConnectionPayload), {
-        type: "REQUEST",
         payload: request.postData?.text || "{}",
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
@@ -1327,7 +1326,7 @@ const ConnectionDetail = ({ connection , onClose  })=>{
         },
         __self: undefined
     }), focusedTab === "RESPONSE" && /*#__PURE__*/ (0, _preact.h)((0, _connectionPayload.ConnectionPayload), {
-        type: "RESPONSE",
+        editable: true,
         payload: content1,
         __source: {
             fileName: "panel/src/components/connection-detail.tsx",
@@ -1444,7 +1443,7 @@ var _preact = require("preact");
 var _hooks = require("preact/hooks");
 var _jsonEditor = require("./json-editor");
 const ConnectionPayload = (props)=>{
-    const { payload  } = props;
+    const { editable , payload  } = props;
     const [showRawPayload, setShowRawPayload] = (0, _hooks.useState)(false);
     return /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-payload",
@@ -1454,11 +1453,19 @@ const ConnectionPayload = (props)=>{
             columnNumber: 9
         },
         __self: undefined
-    }, /*#__PURE__*/ (0, _preact.h)("div", {
+    }, editable && /*#__PURE__*/ (0, _preact.h)("div", {
+        className: "connection-payload-controls",
+        __source: {
+            fileName: "panel/src/components/connection-payload.tsx",
+            lineNumber: 17,
+            columnNumber: 17
+        },
+        __self: undefined
+    }), /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-payload-panel",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 16,
+            lineNumber: 21,
             columnNumber: 13
         },
         __self: undefined
@@ -1466,7 +1473,7 @@ const ConnectionPayload = (props)=>{
         json: payload,
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 17,
+            lineNumber: 22,
             columnNumber: 17
         },
         __self: undefined
