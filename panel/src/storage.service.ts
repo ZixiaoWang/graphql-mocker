@@ -42,7 +42,7 @@ export class StorageService extends BaseService {
         return Boolean(this.cache[key]);
     }
 
-    updateCacheByKey(key: string, value: any, config?: MockedResponseConfig): void {
+    updateCacheByKey(key: string, value: string, config?: MockedResponseConfig): void {
         this.cache[key] = {
             value,
             config
@@ -54,6 +54,11 @@ export class StorageService extends BaseService {
 
         const [url, queryString] = key.split("::");
         const queryName = getQueryName(JSON.parse(queryString)?.query);
+
+        console.log({
+            queryString, queryName
+        })
+
         if (queryName) {
             mockService.mockQuery(queryName, value);
         }

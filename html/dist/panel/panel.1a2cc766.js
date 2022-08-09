@@ -538,6 +538,7 @@ var _components = require("./components");
 var _panelPipe = require("./panel.pipe");
 var _panelService = require("./panel.service");
 var _panelScss = require("./panel.scss");
+var _storageService = require("./storage.service");
 const DevtoolsPanelApp = ()=>{
     const [focusedConnection, setFocusedConnection] = (0, _hooks.useState)(null);
     const panelService = (0, _panelService.usePanelService)();
@@ -586,11 +587,12 @@ const DevtoolsPanelApp = ()=>{
     },
     __self: undefined
 }), document.getElementById("root"));
+(0, _storageService.storageService).init("testing");
 chrome.devtools.network.onRequestFinished.addListener((networkRequest)=>{
     (0, _panelService.panelService).push(networkRequest);
 });
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./components":"g6522","./panel.pipe":"8bgwM","./panel.service":"8Gwoz","./panel.scss":"ekLgM"}],"cwEwC":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","./components":"g6522","./panel.pipe":"8bgwM","./panel.service":"8Gwoz","./panel.scss":"ekLgM","./storage.service":"7mNQr"}],"cwEwC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "render", ()=>P);
@@ -1562,7 +1564,125 @@ const ConnectionPayload = (props)=>{
     })));
 };
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","../panel.helper":"dwAkW","./json-editor":"hQUEq","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../storage.service":"7mNQr"}],"hQUEq":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","../panel.helper":"dwAkW","../storage.service":"7mNQr","./json-editor":"hQUEq","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"7mNQr":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "StorageService", ()=>StorageService);
+parcelHelpers.export(exports, "storageService", ()=>storageService);
+var _baseService = require("./base.service");
+var _mockService = require("./mock.service");
+var _panelHelper = require("./panel.helper");
+class StorageService extends (0, _baseService.BaseService) {
+    cache = {};
+    domain = "";
+    constructor(){
+        super();
+        window.storageService = this;
+    }
+    init(domain) {
+        this.domain = domain;
+        chrome.storage.local.get(this.domain, (item)=>{
+            this.cache = item[this.domain] || {};
+        });
+        Object.keys(this.cache).forEach((urlAndQuery)=>{
+            const [url, queryString] = urlAndQuery.split("::");
+            const mockedResponse = this.cache[urlAndQuery].value || "{}";
+            const queryName = (0, _panelHelper.getQueryName)(JSON.parse(queryString)?.query);
+            if (queryName) (0, _mockService.mockService).mockQuery(queryName, mockedResponse);
+        });
+    }
+    hasCacheByKey(key) {
+        return Boolean(this.cache[key]);
+    }
+    updateCacheByKey(key, value, config) {
+        this.cache[key] = {
+            value,
+            config
+        };
+        chrome.storage.local.set({
+            [this.domain]: this.cache
+        });
+        const [url, queryString] = key.split("::");
+        const queryName = (0, _panelHelper.getQueryName)(JSON.parse(queryString)?.query);
+        console.log({
+            queryString,
+            queryName
+        });
+        if (queryName) (0, _mockService.mockService).mockQuery(queryName, value);
+    }
+    getCacheByKey(key) {
+        if (this.cache[key]) return this.cache[key].value || "";
+        return null;
+    }
+    removeCacheByKey(key) {
+        delete this.cache[key];
+        chrome.storage.local.remove(key);
+    }
+    clear() {
+        this.cache = {};
+        chrome.storage.local.clear();
+    }
+}
+const storageService = new StorageService();
+
+},{"./base.service":"4DEKG","./mock.service":"4jDmf","./panel.helper":"dwAkW","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"4DEKG":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "BaseService", ()=>BaseService);
+class BaseService {
+    callbacks = new Set();
+    register(callback) {
+        this.callbacks.add(callback);
+    }
+    unregister(callback) {
+        this.callbacks.delete(callback);
+    }
+    notify(...args) {
+        this.callbacks.forEach((callback)=>{
+            if (callback && typeof callback === "function") {
+                if (args.length === 0) callback(Math.random());
+                else callback(...args);
+            }
+        });
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"4jDmf":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "mockService", ()=>mockService);
+var _baseService = require("./base.service");
+class MockService extends (0, _baseService.BaseService) {
+    cache = new Set();
+    constructor(){
+        super();
+        window.mockService = this;
+    }
+    hasMockedQuery(query) {
+        return this.cache.has(query);
+    }
+    hasQueryMocked = this.hasMockedQuery;
+    mockQuery(query, mockedResponse) {
+        chrome.devtools.inspectedWindow.eval(`
+            window?.ah?.proxyMap?.mockQuery(
+                "${query}",
+                "${mockedResponse}",
+            );
+            console.log("%c${query} has been mocked", "color: white; background-color: green; display: inline-block; padding: 2px 4px; border-radius: 4px;");
+        `);
+        this.cache.add(query);
+    }
+    unMockedQuery(query) {
+        chrome.devtools.inspectedWindow.eval(`
+            window?.ah?.proxyMap?.mockQuery("${query}");
+            console.log("%c${query} has been unmocked", "color: white; background-color: grey; display: inline-block; padding: 2px 4px; border-radius: 4px;");
+        `);
+        this.cache.delete(query);
+    }
+}
+const mockService = new MockService();
+
+},{"./base.service":"4DEKG","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"hQUEq":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "JSONEditor", ()=>JSONEditor);
@@ -1636,121 +1756,7 @@ const JSONEditor = (props)=>{
     }));
 };
 
-},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"7mNQr":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "StorageService", ()=>StorageService);
-parcelHelpers.export(exports, "storageService", ()=>storageService);
-var _baseService = require("./base.service");
-var _mockService = require("./mock.service");
-var _panelHelper = require("./panel.helper");
-class StorageService extends (0, _baseService.BaseService) {
-    cache = {};
-    domain = "";
-    constructor(){
-        super();
-        window.storageService = this;
-    }
-    init(domain) {
-        this.domain = domain;
-        chrome.storage.local.get(this.domain, (item)=>{
-            this.cache = item[this.domain] || {};
-        });
-        Object.keys(this.cache).forEach((urlAndQuery)=>{
-            const [url, queryString] = urlAndQuery.split("::");
-            const mockedResponse = this.cache[urlAndQuery].value || "{}";
-            const queryName = (0, _panelHelper.getQueryName)(JSON.parse(queryString)?.query);
-            if (queryName) (0, _mockService.mockService).mockQuery(queryName, mockedResponse);
-        });
-    }
-    hasCacheByKey(key) {
-        return Boolean(this.cache[key]);
-    }
-    updateCacheByKey(key, value, config) {
-        this.cache[key] = {
-            value,
-            config
-        };
-        chrome.storage.local.set({
-            [this.domain]: this.cache
-        });
-        const [url, queryString] = key.split("::");
-        const queryName = (0, _panelHelper.getQueryName)(JSON.parse(queryString)?.query);
-        if (queryName) (0, _mockService.mockService).mockQuery(queryName, value);
-    }
-    getCacheByKey(key) {
-        if (this.cache[key]) return this.cache[key].value || "";
-        return null;
-    }
-    removeCacheByKey(key) {
-        delete this.cache[key];
-        chrome.storage.local.remove(key);
-    }
-    clear() {
-        this.cache = {};
-        chrome.storage.local.clear();
-    }
-}
-const storageService = new StorageService();
-
-},{"./base.service":"4DEKG","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","./mock.service":"4jDmf","./panel.helper":"dwAkW"}],"4DEKG":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "BaseService", ()=>BaseService);
-class BaseService {
-    callbacks = new Set();
-    register(callback) {
-        this.callbacks.add(callback);
-    }
-    unregister(callback) {
-        this.callbacks.delete(callback);
-    }
-    notify(...args) {
-        this.callbacks.forEach((callback)=>{
-            if (callback && typeof callback === "function") {
-                if (args.length === 0) callback(Math.random());
-                else callback(...args);
-            }
-        });
-    }
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"4jDmf":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "mockService", ()=>mockService);
-var _baseService = require("./base.service");
-class MockService extends (0, _baseService.BaseService) {
-    cache = new Set();
-    constructor(){
-        super();
-        window.mockService = this;
-    }
-    hasMockedQuery(query) {
-        return this.cache.has(query);
-    }
-    hasQueryMocked = this.hasMockedQuery;
-    mockQuery(query, mockedResponse) {
-        chrome.devtools.inspectedWindow.eval(`
-            window?.ah?.proxyMap?.mockQuery(
-                "${query}",
-                "${mockedResponse}",
-            );
-            console.log("%c${query} has been mocked", "color: white; background-color: green; display: inline-block; padding: 2px 4px; border-radius: 4px;");
-        `);
-        this.cache.add(query);
-    }
-    unMockedQuery(query) {
-        chrome.devtools.inspectedWindow.eval(`
-            window?.ah?.proxyMap?.mockQuery("${query}");
-            console.log("%c${query} has been unmocked", "color: white; background-color: grey; display: inline-block; padding: 2px 4px; border-radius: 4px;");
-        `);
-        this.cache.delete(query);
-    }
-}
-const mockService = new MockService();
-
-},{"./base.service":"4DEKG","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"Begyj":[function(require,module,exports) {
+},{"preact":"cwEwC","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"Begyj":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionSetting", ()=>ConnectionSetting);

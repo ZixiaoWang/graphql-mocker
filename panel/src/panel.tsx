@@ -3,9 +3,9 @@ import { useState } from "preact/hooks";
 import { ConnectionDetail, ConnectionList } from "./components";
 import { GRAPHQL_ONLY } from "./panel.pipe";
 import { panelService, PanelService, usePanelService } from "./panel.service";
-import { storageService } from "./storage.service";
 
 import "./panel.scss";
+import { storageService } from "./storage.service";
 
 const DevtoolsPanelApp = () => {
     const [focusedConnection, setFocusedConnection] = useState<chrome.devtools.network.Request | null>(null);
@@ -41,6 +41,7 @@ const DevtoolsPanelApp = () => {
 }
 
 render(<DevtoolsPanelApp />, document.getElementById("root") as HTMLDivElement);
+storageService.init("testing");
 
 chrome.devtools.network
     .onRequestFinished
