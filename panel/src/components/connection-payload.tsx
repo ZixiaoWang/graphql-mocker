@@ -1,7 +1,7 @@
 import { h } from "preact";
 import { useState, useEffect } from "preact/hooks";
-import { getQueryName } from "../panel.helper";
-import { stroageService } from "../storage.service";
+import { getQueryName, getStorageKeyByConnection } from "../panel.helper";
+import { storageService } from "../storage.service";
 import { JSONEditor } from "./json-editor";
 
 export interface ConnectionPayloadProps {
@@ -11,33 +11,41 @@ export interface ConnectionPayloadProps {
 
 export const ConnectionPayload = (props: ConnectionPayloadProps) => {
     const { editable, connection } = props;
+    const key: string = getStorageKeyByConnection(connection);
     const [content, setContent] = useState("{}");
     const [mockedContent, setMockedContent] = useState(content);
-    const [ifMock, setIfMock] = useState(false);
-
-    const key: string = [connection.request.url, connection.request.postData?.text || ""].filter(Boolean).join("::");
+    const [ifMock, setIfMock] = useState(storageService.hasCacheByKey(key));
 
     useEffect(() => {
         connection.getContent((content: string) => {
             setContent(content);
+            setMockedContent(content);
         })
     }, [connection]);
 
     const onMockResponseToggleHandler = (event: Event) => {
         const mock: boolean = !ifMock;
         if (mock) {
-            stroageService.updateCacheByKey(key, content);
-            setMockedContent(content);
+            if(storageService.hasCacheByKey(key)) {
+                const presistedMockedContent: string = storageService.getCacheByKey(key) || "{}";
+                setMockedContent(presistedMockedContent);
+            } else {
+                storageService.updateCacheByKey(key, content);
+                setMockedContent(content);
+            }
         } else {
-            stroageService.removeCacheByKey(key);
+            setMockedContent(content);
         }
         setIfMock(mock);
     }
 
     const onMockContentChangeHandler = (mockedContentString: string) => {
         try {
-            const mockedResponse: any = JSON.parse(mockedContentString);
-        } catch (e) {}
+            storageService.updateCacheByKey(key, mockedContentString);
+            setMockedContent(mockedContentString);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     return (
@@ -53,7 +61,7 @@ export const ConnectionPayload = (props: ConnectionPayloadProps) => {
             <div className="connection-payload-panel">
                 <JSONEditor 
                     editable={editable && ifMock} 
-                    json={content}
+                    json={mockedContent}
                     onChange={onMockContentChangeHandler}
                 />
             </div>

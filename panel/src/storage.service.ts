@@ -19,8 +19,12 @@ export class StorageService extends BaseService {
     init(domain: string) {
         this.domain = domain;
         chrome.storage.local.get(this.domain, (item) => {
-            this.cache = item || {};
+            this.cache = item[this.domain] || {};
         });
+    }
+
+    hasCacheByKey(key: string): boolean {
+        return Boolean(this.cache[key]);
     }
 
     updateCacheByKey(key: string, value: any, config?: MockedResponseConfig): void {
@@ -51,4 +55,4 @@ export class StorageService extends BaseService {
     }
 }
 
-export const stroageService: StorageService = new StorageService();
+export const storageService: StorageService = new StorageService();

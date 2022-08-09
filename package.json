@@ -13,6 +13,7 @@
     "watch:panel": "rm -rf html/dist/panel && yarn parcel watch --no-source-maps --no-cache --public-url ./ --dist-dir html/dist/panel panel/panel.html"
   },
   "dependencies": {
+    "classnames": "^2.3.1",
     "preact": "^10.10.0",
     "preact-router": "^4.1.0"
   }

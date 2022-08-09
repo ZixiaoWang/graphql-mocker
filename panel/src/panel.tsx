@@ -3,6 +3,7 @@ import { useState } from "preact/hooks";
 import { ConnectionDetail, ConnectionList } from "./components";
 import { GRAPHQL_ONLY } from "./panel.pipe";
 import { panelService, PanelService, usePanelService } from "./panel.service";
+import { storageService } from "./storage.service";
 
 import "./panel.scss";
 
@@ -39,10 +40,8 @@ const DevtoolsPanelApp = () => {
     )
 }
 
-render(
-    <DevtoolsPanelApp />,
-    document.getElementById("root") as HTMLDivElement
-);
+storageService.init("testing");
+render(<DevtoolsPanelApp />, document.getElementById("root") as HTMLDivElement);
 
 chrome.devtools.network
     .onRequestFinished

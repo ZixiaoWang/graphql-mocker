@@ -537,6 +537,7 @@ var _hooks = require("preact/hooks");
 var _components = require("./components");
 var _panelPipe = require("./panel.pipe");
 var _panelService = require("./panel.service");
+var _storageService = require("./storage.service");
 var _panelScss = require("./panel.scss");
 const DevtoolsPanelApp = ()=>{
     const [focusedConnection, setFocusedConnection] = (0, _hooks.useState)(null);
@@ -552,7 +553,7 @@ const DevtoolsPanelApp = ()=>{
         className: "connection",
         __source: {
             fileName: "panel/src/panel.tsx",
-            lineNumber: 24,
+            lineNumber: 25,
             columnNumber: 9
         },
         __self: undefined
@@ -562,7 +563,7 @@ const DevtoolsPanelApp = ()=>{
         onClick: onItemClickHandler,
         __source: {
             fileName: "panel/src/panel.tsx",
-            lineNumber: 25,
+            lineNumber: 26,
             columnNumber: 13
         },
         __self: undefined
@@ -572,17 +573,18 @@ const DevtoolsPanelApp = ()=>{
         onClose: onDetailPanelCloseHandler,
         __source: {
             fileName: "panel/src/panel.tsx",
-            lineNumber: 32,
+            lineNumber: 33,
             columnNumber: 17
         },
         __self: undefined
     }));
 };
+(0, _storageService.storageService).init("testing");
 (0, _preact.render)(/*#__PURE__*/ (0, _preact.h)(DevtoolsPanelApp, {
     __source: {
         fileName: "panel/src/panel.tsx",
-        lineNumber: 43,
-        columnNumber: 5
+        lineNumber: 44,
+        columnNumber: 8
     },
     __self: undefined
 }), document.getElementById("root"));
@@ -590,7 +592,7 @@ chrome.devtools.network.onRequestFinished.addListener((networkRequest)=>{
     (0, _panelService.panelService).push(networkRequest);
 });
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./components":"g6522","./panel.pipe":"8bgwM","./panel.service":"8Gwoz","./panel.scss":"ekLgM"}],"cwEwC":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","./components":"g6522","./panel.pipe":"8bgwM","./panel.service":"8Gwoz","./panel.scss":"ekLgM","./storage.service":"7mNQr"}],"cwEwC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "render", ()=>P);
@@ -1105,7 +1107,7 @@ parcelHelpers.exportAll(_connectionSetting, exports);
 var _jsonEditor = require("./json-editor");
 parcelHelpers.exportAll(_jsonEditor, exports);
 
-},{"./connection-list":"7zVZ4","./connection-detail":"5dezv","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","./connection-header":"9zgEq","./connection-payload":"bDzSx","./connection-request":"cveAZ","./connection-setting":"Begyj","./json-editor":"hQUEq"}],"7zVZ4":[function(require,module,exports) {
+},{"./connection-list":"7zVZ4","./connection-detail":"5dezv","./connection-header":"9zgEq","./connection-payload":"bDzSx","./connection-request":"cveAZ","./connection-setting":"Begyj","./json-editor":"hQUEq","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"7zVZ4":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionList", ()=>ConnectionList);
@@ -1230,9 +1232,16 @@ const ConnectionList = ({ compact , connections , onClick  })=>{
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getQueryName", ()=>getQueryName);
+parcelHelpers.export(exports, "getStorageKeyByConnection", ()=>getStorageKeyByConnection);
 const getQueryName = (queryString)=>{
     if (!queryString) return null;
     return queryString.split("{")[0].split("(")[0].trim().split(" ")[1] || null;
+};
+const getStorageKeyByConnection = (connection)=>{
+    return [
+        connection.request.url,
+        connection.request.postData?.text || ""
+    ].filter(Boolean).join("::");
 };
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"5dezv":[function(require,module,exports) {
@@ -1350,7 +1359,7 @@ const ConnectionDetail = ({ connection , onClose  })=>{
     })));
 };
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./connection-header":"9zgEq","./connection-payload":"bDzSx","./connection-setting":"Begyj","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh",".":"g6522"}],"9zgEq":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9",".":"g6522","./connection-header":"9zgEq","./connection-payload":"bDzSx","./connection-setting":"Begyj","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"9zgEq":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionHeader", ()=>ConnectionHeader);
@@ -1447,20 +1456,19 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionPayload", ()=>ConnectionPayload);
 var _preact = require("preact");
 var _hooks = require("preact/hooks");
+var _panelHelper = require("../panel.helper");
 var _storageService = require("../storage.service");
 var _jsonEditor = require("./json-editor");
 const ConnectionPayload = (props)=>{
     const { editable , connection  } = props;
+    const key = (0, _panelHelper.getStorageKeyByConnection)(connection);
     const [content1, setContent] = (0, _hooks.useState)("{}");
     const [mockedContent, setMockedContent] = (0, _hooks.useState)(content1);
-    const [ifMock, setIfMock] = (0, _hooks.useState)(false);
-    const key = [
-        connection.request.url,
-        connection.request.postData?.text || ""
-    ].filter(Boolean).join("::");
+    const [ifMock, setIfMock] = (0, _hooks.useState)((0, _storageService.storageService).hasCacheByKey(key));
     (0, _hooks.useEffect)(()=>{
         connection.getContent((content)=>{
             setContent(content);
+            setMockedContent(content);
         });
     }, [
         connection
@@ -1468,21 +1476,29 @@ const ConnectionPayload = (props)=>{
     const onMockResponseToggleHandler = (event)=>{
         const mock = !ifMock;
         if (mock) {
-            (0, _storageService.stroageService).updateCacheByKey(key, content1);
-            setMockedContent(content1);
-        } else (0, _storageService.stroageService).removeCacheByKey(key);
+            if ((0, _storageService.storageService).hasCacheByKey(key)) {
+                const presistedMockedContent = (0, _storageService.storageService).getCacheByKey(key) || "{}";
+                setMockedContent(presistedMockedContent);
+            } else {
+                (0, _storageService.storageService).updateCacheByKey(key, content1);
+                setMockedContent(content1);
+            }
+        } else setMockedContent(content1);
         setIfMock(mock);
     };
     const onMockContentChangeHandler = (mockedContentString)=>{
         try {
-            const mockedResponse = JSON.parse(mockedContentString);
-        } catch (e) {}
+            (0, _storageService.storageService).updateCacheByKey(key, mockedContentString);
+            setMockedContent(mockedContentString);
+        } catch (e) {
+            console.error(e);
+        }
     };
     return /*#__PURE__*/ (0, _preact.h)("div", {
         className: "connection-payload",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 44,
+            lineNumber: 52,
             columnNumber: 9
         },
         __self: undefined
@@ -1490,7 +1506,7 @@ const ConnectionPayload = (props)=>{
         className: "connection-payload-controls",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 46,
+            lineNumber: 54,
             columnNumber: 17
         },
         __self: undefined
@@ -1499,7 +1515,7 @@ const ConnectionPayload = (props)=>{
         class: "connection-payload-control",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 47,
+            lineNumber: 55,
             columnNumber: 21
         },
         __self: undefined
@@ -1511,14 +1527,14 @@ const ConnectionPayload = (props)=>{
         onChange: onMockResponseToggleHandler,
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 48,
+            lineNumber: 56,
             columnNumber: 25
         },
         __self: undefined
     }), /*#__PURE__*/ (0, _preact.h)("span", {
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 49,
+            lineNumber: 57,
             columnNumber: 25
         },
         __self: undefined
@@ -1526,24 +1542,24 @@ const ConnectionPayload = (props)=>{
         className: "connection-payload-panel",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 53,
+            lineNumber: 61,
             columnNumber: 13
         },
         __self: undefined
     }, /*#__PURE__*/ (0, _preact.h)((0, _jsonEditor.JSONEditor), {
         editable: editable && ifMock,
-        json: content1,
+        json: mockedContent,
         onChange: onMockContentChangeHandler,
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 54,
+            lineNumber: 62,
             columnNumber: 17
         },
         __self: undefined
     })));
 };
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./json-editor":"hQUEq","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../storage.service":"7mNQr"}],"hQUEq":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","../panel.helper":"dwAkW","./json-editor":"hQUEq","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","../storage.service":"7mNQr"}],"hQUEq":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "JSONEditor", ()=>JSONEditor);
@@ -1621,7 +1637,7 @@ const JSONEditor = (props)=>{
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "StorageService", ()=>StorageService);
-parcelHelpers.export(exports, "stroageService", ()=>stroageService);
+parcelHelpers.export(exports, "storageService", ()=>storageService);
 var _baseService = require("./base.service");
 class StorageService extends (0, _baseService.BaseService) {
     cache = {};
@@ -1633,8 +1649,11 @@ class StorageService extends (0, _baseService.BaseService) {
     init(domain) {
         this.domain = domain;
         chrome.storage.local.get(this.domain, (item)=>{
-            this.cache = item || {};
+            this.cache = item[this.domain] || {};
         });
+    }
+    hasCacheByKey(key) {
+        return Boolean(this.cache[key]);
     }
     updateCacheByKey(key, value, config) {
         this.cache[key] = {
@@ -1658,7 +1677,7 @@ class StorageService extends (0, _baseService.BaseService) {
         chrome.storage.local.clear();
     }
 }
-const stroageService = new StorageService();
+const storageService = new StorageService();
 
 },{"./base.service":"4DEKG","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"4DEKG":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
