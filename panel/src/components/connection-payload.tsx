@@ -17,9 +17,14 @@ export const ConnectionPayload = (props: ConnectionPayloadProps) => {
     const [ifMock, setIfMock] = useState(storageService.hasCacheByKey(key));
 
     useEffect(() => {
+        if(storageService.hasCacheByKey(key)) {
+            setMockedContent(storageService.getCacheByKey(key) || "{}");
+        }
+    }, []);
+
+    useEffect(() => {
         connection.getContent((content: string) => {
             setContent(content);
-            setMockedContent(content);
         })
     }, [connection]);
 
@@ -34,6 +39,7 @@ export const ConnectionPayload = (props: ConnectionPayloadProps) => {
                 setMockedContent(content);
             }
         } else {
+            storageService.removeCacheByKey(key);
             setMockedContent(content);
         }
         setIfMock(mock);

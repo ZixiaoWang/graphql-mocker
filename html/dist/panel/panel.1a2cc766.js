@@ -537,7 +537,6 @@ var _hooks = require("preact/hooks");
 var _components = require("./components");
 var _panelPipe = require("./panel.pipe");
 var _panelService = require("./panel.service");
-var _storageService = require("./storage.service");
 var _panelScss = require("./panel.scss");
 const DevtoolsPanelApp = ()=>{
     const [focusedConnection, setFocusedConnection] = (0, _hooks.useState)(null);
@@ -579,11 +578,10 @@ const DevtoolsPanelApp = ()=>{
         __self: undefined
     }));
 };
-(0, _storageService.storageService).init("testing");
 (0, _preact.render)(/*#__PURE__*/ (0, _preact.h)(DevtoolsPanelApp, {
     __source: {
         fileName: "panel/src/panel.tsx",
-        lineNumber: 44,
+        lineNumber: 43,
         columnNumber: 8
     },
     __self: undefined
@@ -592,7 +590,7 @@ chrome.devtools.network.onRequestFinished.addListener((networkRequest)=>{
     (0, _panelService.panelService).push(networkRequest);
 });
 
-},{"preact":"cwEwC","preact/hooks":"97VL9","./components":"g6522","./panel.pipe":"8bgwM","./panel.service":"8Gwoz","./panel.scss":"ekLgM","./storage.service":"7mNQr"}],"cwEwC":[function(require,module,exports) {
+},{"preact":"cwEwC","preact/hooks":"97VL9","./components":"g6522","./panel.pipe":"8bgwM","./panel.service":"8Gwoz","./panel.scss":"ekLgM"}],"cwEwC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "render", ()=>P);
@@ -1466,9 +1464,11 @@ const ConnectionPayload = (props)=>{
     const [mockedContent, setMockedContent] = (0, _hooks.useState)(content1);
     const [ifMock, setIfMock] = (0, _hooks.useState)((0, _storageService.storageService).hasCacheByKey(key));
     (0, _hooks.useEffect)(()=>{
+        if ((0, _storageService.storageService).hasCacheByKey(key)) setMockedContent((0, _storageService.storageService).getCacheByKey(key) || "{}");
+    }, []);
+    (0, _hooks.useEffect)(()=>{
         connection.getContent((content)=>{
             setContent(content);
-            setMockedContent(content);
         });
     }, [
         connection
@@ -1483,7 +1483,10 @@ const ConnectionPayload = (props)=>{
                 (0, _storageService.storageService).updateCacheByKey(key, content1);
                 setMockedContent(content1);
             }
-        } else setMockedContent(content1);
+        } else {
+            (0, _storageService.storageService).removeCacheByKey(key);
+            setMockedContent(content1);
+        }
         setIfMock(mock);
     };
     const onMockContentChangeHandler = (mockedContentString)=>{
@@ -1498,7 +1501,7 @@ const ConnectionPayload = (props)=>{
         className: "connection-payload",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 52,
+            lineNumber: 58,
             columnNumber: 9
         },
         __self: undefined
@@ -1506,7 +1509,7 @@ const ConnectionPayload = (props)=>{
         className: "connection-payload-controls",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 54,
+            lineNumber: 60,
             columnNumber: 17
         },
         __self: undefined
@@ -1515,7 +1518,7 @@ const ConnectionPayload = (props)=>{
         class: "connection-payload-control",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 55,
+            lineNumber: 61,
             columnNumber: 21
         },
         __self: undefined
@@ -1527,14 +1530,14 @@ const ConnectionPayload = (props)=>{
         onChange: onMockResponseToggleHandler,
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 56,
+            lineNumber: 62,
             columnNumber: 25
         },
         __self: undefined
     }), /*#__PURE__*/ (0, _preact.h)("span", {
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 57,
+            lineNumber: 63,
             columnNumber: 25
         },
         __self: undefined
@@ -1542,7 +1545,7 @@ const ConnectionPayload = (props)=>{
         className: "connection-payload-panel",
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 61,
+            lineNumber: 67,
             columnNumber: 13
         },
         __self: undefined
@@ -1552,7 +1555,7 @@ const ConnectionPayload = (props)=>{
         onChange: onMockContentChangeHandler,
         __source: {
             fileName: "panel/src/components/connection-payload.tsx",
-            lineNumber: 62,
+            lineNumber: 68,
             columnNumber: 17
         },
         __self: undefined
@@ -1639,6 +1642,8 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "StorageService", ()=>StorageService);
 parcelHelpers.export(exports, "storageService", ()=>storageService);
 var _baseService = require("./base.service");
+var _mockService = require("./mock.service");
+var _panelHelper = require("./panel.helper");
 class StorageService extends (0, _baseService.BaseService) {
     cache = {};
     domain = "";
@@ -1650,6 +1655,12 @@ class StorageService extends (0, _baseService.BaseService) {
         this.domain = domain;
         chrome.storage.local.get(this.domain, (item)=>{
             this.cache = item[this.domain] || {};
+        });
+        Object.keys(this.cache).forEach((urlAndQuery)=>{
+            const [url, queryString] = urlAndQuery.split("::");
+            const mockedResponse = this.cache[urlAndQuery].value || "{}";
+            const queryName = (0, _panelHelper.getQueryName)(JSON.parse(queryString)?.query);
+            if (queryName) (0, _mockService.mockService).mockQuery(queryName, mockedResponse);
         });
     }
     hasCacheByKey(key) {
@@ -1663,6 +1674,9 @@ class StorageService extends (0, _baseService.BaseService) {
         chrome.storage.local.set({
             [this.domain]: this.cache
         });
+        const [url, queryString] = key.split("::");
+        const queryName = (0, _panelHelper.getQueryName)(JSON.parse(queryString)?.query);
+        if (queryName) (0, _mockService.mockService).mockQuery(queryName, value);
     }
     getCacheByKey(key) {
         if (this.cache[key]) return this.cache[key].value || "";
@@ -1679,7 +1693,7 @@ class StorageService extends (0, _baseService.BaseService) {
 }
 const storageService = new StorageService();
 
-},{"./base.service":"4DEKG","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"4DEKG":[function(require,module,exports) {
+},{"./base.service":"4DEKG","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh","./mock.service":"4jDmf","./panel.helper":"dwAkW"}],"4DEKG":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "BaseService", ()=>BaseService);
@@ -1701,7 +1715,42 @@ class BaseService {
     }
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"Begyj":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"4jDmf":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "mockService", ()=>mockService);
+var _baseService = require("./base.service");
+class MockService extends (0, _baseService.BaseService) {
+    cache = new Set();
+    constructor(){
+        super();
+        window.mockService = this;
+    }
+    hasMockedQuery(query) {
+        return this.cache.has(query);
+    }
+    hasQueryMocked = this.hasMockedQuery;
+    mockQuery(query, mockedResponse) {
+        chrome.devtools.inspectedWindow.eval(`
+            window?.ah?.proxyMap?.mockQuery(
+                "${query}",
+                "${mockedResponse}",
+            );
+            console.log("%c${query} has been mocked", "color: white; background-color: green; display: inline-block; padding: 2px 4px; border-radius: 4px;");
+        `);
+        this.cache.add(query);
+    }
+    unMockedQuery(query) {
+        chrome.devtools.inspectedWindow.eval(`
+            window?.ah?.proxyMap?.mockQuery("${query}");
+            console.log("%c${query} has been unmocked", "color: white; background-color: grey; display: inline-block; padding: 2px 4px; border-radius: 4px;");
+        `);
+        this.cache.delete(query);
+    }
+}
+const mockService = new MockService();
+
+},{"./base.service":"4DEKG","@parcel/transformer-js/src/esmodule-helpers.js":"j7FRh"}],"Begyj":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ConnectionSetting", ()=>ConnectionSetting);

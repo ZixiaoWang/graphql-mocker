@@ -40,7 +40,6 @@ const DevtoolsPanelApp = () => {
     )
 }
 
-storageService.init("testing");
 render(<DevtoolsPanelApp />, document.getElementById("root") as HTMLDivElement);
 
 chrome.devtools.network
