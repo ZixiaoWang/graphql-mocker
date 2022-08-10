@@ -16,6 +16,7 @@ export const JSONEditor = (props: JSONEditorProps) => {
     const jsonRows = jsonString?.split(/\r?\n|\\n/g).map(row => row.replace(/\s/g, '\u00A0')) || [""];
 
     const onMockedResponseChangeHandler = (event: Event) => {
+        console.log(event)
         const newValue: string = (event.target as any).value || "";
         if (onChange && typeof onChange === "function") {
             onChange(newValue);

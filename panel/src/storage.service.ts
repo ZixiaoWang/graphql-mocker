@@ -55,10 +55,6 @@ export class StorageService extends BaseService {
         const [url, queryString] = key.split("::");
         const queryName = getQueryName(JSON.parse(queryString)?.query);
 
-        console.log({
-            queryString, queryName
-        })
-
         if (queryName) {
             mockService.mockQuery(queryName, value);
         }

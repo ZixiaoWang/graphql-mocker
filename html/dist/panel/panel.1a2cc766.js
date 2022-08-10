@@ -1604,10 +1604,6 @@ class StorageService extends (0, _baseService.BaseService) {
         });
         const [url, queryString] = key.split("::");
         const queryName = (0, _panelHelper.getQueryName)(JSON.parse(queryString)?.query);
-        console.log({
-            queryString,
-            queryName
-        });
         if (queryName) (0, _mockService.mockService).mockQuery(queryName, value);
     }
     getCacheByKey(key) {
@@ -1694,6 +1690,7 @@ const JSONEditor = (props)=>{
         ""
     ];
     const onMockedResponseChangeHandler = (event)=>{
+        console.log(event);
         const newValue = event.target.value || "";
         if (onChange && typeof onChange === "function") onChange(newValue);
     };
@@ -1701,7 +1698,7 @@ const JSONEditor = (props)=>{
         className: "json-editor",
         __source: {
             fileName: "panel/src/components/json-editor.tsx",
-            lineNumber: 27,
+            lineNumber: 28,
             columnNumber: 13
         },
         __self: undefined
@@ -1713,7 +1710,7 @@ const JSONEditor = (props)=>{
         value: jsonString,
         __source: {
             fileName: "panel/src/components/json-editor.tsx",
-            lineNumber: 28,
+            lineNumber: 29,
             columnNumber: 17
         },
         __self: undefined
@@ -1722,7 +1719,7 @@ const JSONEditor = (props)=>{
         className: "json-editor",
         __source: {
             fileName: "panel/src/components/json-editor.tsx",
-            lineNumber: 40,
+            lineNumber: 41,
             columnNumber: 9
         },
         __self: undefined
@@ -1732,7 +1729,7 @@ const JSONEditor = (props)=>{
             onChange: (event)=>console.log(event),
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
-                lineNumber: 43,
+                lineNumber: 44,
                 columnNumber: 21
             },
             __self: undefined
@@ -1740,7 +1737,7 @@ const JSONEditor = (props)=>{
             className: "json-row-index",
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
-                lineNumber: 44,
+                lineNumber: 45,
                 columnNumber: 25
             },
             __self: undefined
@@ -1748,7 +1745,7 @@ const JSONEditor = (props)=>{
             className: "json-row-content",
             __source: {
                 fileName: "panel/src/components/json-editor.tsx",
-                lineNumber: 45,
+                lineNumber: 46,
                 columnNumber: 25
             },
             __self: undefined
