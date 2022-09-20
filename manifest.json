@@ -7,7 +7,9 @@
         "matches": [
             "https://*.flexport.com/*",
             "https://*.flexport.internal/*",
-            "http://localhost:8081/*"
+            "http://localhost:8080/*",
+            "http://localhost:8081/*",
+            "http://localhost:3000/*"
         ],
         "js": [
             "html/dist/content/content-script.js"
@@ -26,13 +28,15 @@
     ],
     "web_accessible_resources": [{
         "resources": [
-            "html/dist/content/inject.js",
-            "html/dist/content/content-script.js"
+            "html/dist/content/content-script.js",
+            "html/dist/content/inject.js"
         ],
         "matches": [
             "https://*.flexport.com/*",
             "https://*.flexport.internal/*",
-            "http://localhost:8081/*"
+            "http://localhost:8080/*",
+            "http://localhost:8081/*",
+            "http://localhost:3000/*"
         ]
     }],
     "action": {
